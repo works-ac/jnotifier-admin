@@ -14,7 +14,7 @@ import { setUserAuthStatus, setUserRole } from "../redux/slices/AuthSlice";
  *   { data: { data: { message: "authenticated", role: "ADMIN" | "USER" | ... } } }
  */
 function useAuthStatus() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // true = assume loading until first check completes
   const { alert, handleAlertOnClose, reset, showErrorMsg } = useAppAlert();
 
   const dispatch = useDispatch();

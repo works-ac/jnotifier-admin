@@ -12,7 +12,8 @@ function useHome() {
   const [paginationMetadata, setPaginationMetadata] = useState(
     AppPaginationMetadata,
   );
-  const [pagination, setPagination] = useState({ page: 0, size: 10 });
+  // MRT pagination state shape: { pageIndex, pageSize }
+  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
   const [jobDetails, setJobDetails] = useState(JobDetails);
   const { alert, handleAlertOnClose, reset, showErrorMsg } = useAppAlert();
 
@@ -21,9 +22,10 @@ function useHome() {
     reset();
 
     try {
-      const response = await getJobs();
+      // Map MRT's pageIndex/pageSize to the API's page/size params
+      const response = await getJobs({ page: pagination.pageIndex, size: pagination.pageSize });
       const content = response.data?.data?.content || [];
-      const pagination = {
+      const paginationData = {
         pageNo: response.data?.data?.pageNo ?? -1,
         totalPages: response.data?.data?.totalPages ?? -1,
         last: response.data?.data?.last ?? true,
@@ -31,78 +33,14 @@ function useHome() {
       };
 
       setJobs(content);
-      setPaginationMetadata(pagination);
+      setPaginationMetadata(paginationData);
     } catch (error) {
       showErrorMsg(error);
       setJobs([]);
     } finally {
       setIsLoading(false);
     }
-  }, []);
-
-  const fetchNextJob = useCallback(
-    async function () {
-      setIsLoading(true);
-      reset();
-
-      const payload = {
-        page: pagination.page + 1,
-        size: 10,
-      };
-
-      try {
-        const response = await getJobs(payload);
-        const content = response.data?.data?.content || [];
-        const paginationData = {
-          pageNo: response.data?.data?.pageNo ?? -1,
-          totalPages: response.data?.data?.totalPages ?? -1,
-          last: response.data?.data?.last ?? true,
-          totalElements: response.data?.data?.totalElements ?? -1,
-        };
-
-        setJobs(content);
-        setPagination((prev) => ({ ...prev, page: prev.page + 1 }));
-        setPaginationMetadata(paginationData);
-      } catch (error) {
-        showErrorMsg(error);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [pagination],
-  );
-
-  const fetchPreviousJob = useCallback(
-    async function () {
-      setIsLoading(true);
-      reset();
-
-      const payload = {
-        page: pagination.page - 1,
-        size: 10,
-      };
-
-      try {
-        const response = await getJobs(payload);
-        const content = response.data?.data?.content || [];
-        const paginationData = {
-          pageNo: response.data?.data?.pageNo ?? -1,
-          totalPages: response.data?.data?.totalPages ?? -1,
-          last: response.data?.data?.last ?? true,
-          totalElements: response.data?.data?.totalElements ?? -1,
-        };
-
-        setJobs(content);
-        setPagination((prev) => ({ ...prev, page: prev.page - 1 }));
-        setPaginationMetadata(paginationData);
-      } catch (error) {
-        showErrorMsg(error);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [pagination],
-  );
+  }, [pagination]);
 
   const fetchJobByApplicationId = useCallback(async function (applicationId) {
     setIsJobDetailsLoading(true);
@@ -122,19 +60,19 @@ function useHome() {
 
   useEffect(() => {
     fetchAllJobs();
-  }, []);
+  }, [pagination]);
 
   return {
     handleAlertOnClose,
     fetchJobByApplicationId,
-    fetchNextJob,
-    fetchPreviousJob,
+    setPagination,
     jobs,
     isLoading,
     alert,
     isJobDetailsLoading,
     jobDetails,
     paginationMetadata,
+    pagination
   };
 }
 

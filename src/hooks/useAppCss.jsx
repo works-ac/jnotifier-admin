@@ -41,12 +41,59 @@ function useAppCss() {
     [],
   );
 
+  const GlobalTableCss = useMemo(
+    () => ({
+      muiTablePaperProps: {
+        elevation: 3,
+        sx: {
+          borderRadius: "8px",
+          overflow: "hidden",
+          border: `1px solid ${theme.palette.secondary.A100}`,
+        },
+      },
+      muiTableContainerProps: {
+        sx: { maxHeight: "600px", minHeight: "150px" },
+      },
+      muiTableHeadCellProps: {
+        sx: {
+          fontWeight: "bold",
+          color: theme.palette.primary.main,
+          // width: "max-content",
+          whiteSpace: "normal",
+          wordBreak: "break-word",
+          textAlign: "center",
+          borderRight: `1px solid ${theme.palette.secondary.A100}`,
+          borderBottom: `1px solid ${theme.palette.secondary.A100}`,
+          borderTop: `1px solid ${theme.palette.secondary.A100}`,
+        },
+      },
+      muiTableBodyCellProps: { sx: { color: "gray", fontWeight: 700 } },
+      muiPaginationProps: {
+        rowsPerPageOptions: [10, 20, 30, 40, 50, 100],
+      },
+      enableStickyHeader: true,
+    }),
+    [theme],
+  );
+
+  const GlobalChipCss = useMemo(
+    () => ({
+      borderRadius: "8px",
+      backgroundColor: "white",
+      border: `1px solid ${theme.palette.success.main}`,
+      color: theme.palette.success.main,
+    }),
+    [],
+  );
+
   return {
     RequiredFieldCss,
     RequiredSwitchCss,
     GlobalPaperCss,
     GlobalAccordianCss,
     GlobalDialogDividerCss,
+    GlobalTableCss,
+    GlobalChipCss
   };
 }
 

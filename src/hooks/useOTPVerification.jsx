@@ -28,7 +28,7 @@ function useOTPVerification() {
       if (
         payload.verificationType === AppConstants.OTP_VERIFICATION_TYPE.LOGIN
       ) {
-        globalThis.location.reload();
+        navigate("/", { replace: true });
         return;
       }
 

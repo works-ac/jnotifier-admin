@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
+import ResponsiveImage from "../components/core/ResponsiveImage";
 
 function HomePage() {
   return (
@@ -14,17 +15,7 @@ function HomePage() {
         gap: 3,
       }}
     >
-      <Box
-        component="img"
-        src="/logo.png"
-        alt="JNotifier Logo"
-        sx={{
-          width: 240,
-          height: 240,
-          objectFit: "contain",
-          borderRadius: "50%",
-        }}
-      />
+      <ResponsiveImage src="/logo.png" alt="JNotifier Logo" aspectRatio="1/1" maxWidth="240px" />
 
       <Typography variant="h4" sx={{ fontWeight: 700 }} color="primary">
         Welcome to JNotifier Admin Panel

@@ -1,10 +1,11 @@
 import ApplicationApi from "../api/ApplicationApi";
 
 const HOME_SERVICE_BASE_URL = "/public/";
+const ADMIN_SERVICE_BASE_URL = "/admin/";
 
 export async function getJobs(payload) {
   const params = payload ?? { page: 0, size: 10 };
-  return await ApplicationApi.get(HOME_SERVICE_BASE_URL + "jobs", { params });
+  return await ApplicationApi.get(ADMIN_SERVICE_BASE_URL + "jobs", { params });
 }
 
 export async function getJobById(applicationId) {

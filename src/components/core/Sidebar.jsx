@@ -155,7 +155,7 @@ function Sidebar({ expanded, onToggle }) {
         <List sx={{ flexGrow: 1, pt: 1 }}>
           {visibleNavItems.map((item) =>
             item.children ? (
-              <NavGroup key={item.id} item={item} sidebarExpanded={expanded} />
+              <NavGroup key={item.id} item={item} sidebarExpanded={expanded} onExpandSidebar={onToggle} />
             ) : (
               <NavItem key={item.id} item={item} sidebarExpanded={expanded} />
             )
