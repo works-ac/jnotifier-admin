@@ -79,7 +79,7 @@ function ConfirmationDialog({
               disabled={isLoading}
               color="error"
             >
-              Cancel
+              CANCEL
             </Button>
           )}
 
@@ -99,7 +99,7 @@ function ConfirmationDialog({
             size="small"
             disabled={isLoading}
           >
-            Ok
+            OK
           </Button>
         </DialogActions>
       </Box>

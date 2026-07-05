@@ -11,6 +11,7 @@ import AccountsPage from "../pages/AccountsPage";
 import AccountRegisterationPage from "../pages/AccountRegisterationPage";
 import RecoverAccountPage from "../pages/RecoverAccountPage";
 import ListedJobs from "../pages/ListedJobs";
+import NoticeListingPage from "../pages/NoticeListingPage";
 
 /**
  * Route structure:
@@ -45,10 +46,19 @@ const AppRoutes = createBrowserRouter([
       },
       {
         path: "jobs/listed",
-        element:
+        element: (
           <CheckAuthStatus>
             <ListedJobs />
           </CheckAuthStatus>
+        ),
+      },
+      {
+        path: "jobs/notices",
+        element: (
+          <CheckAuthStatus>
+            <NoticeListingPage />
+          </CheckAuthStatus>
+        ),
       },
       {
         path: "account",
@@ -60,9 +70,7 @@ const AppRoutes = createBrowserRouter([
       },
       {
         path: "*",
-        element: (
-          <NotFoundPage />
-        ),
+        element: <NotFoundPage />,
       },
     ],
   },

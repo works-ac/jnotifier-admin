@@ -17,30 +17,36 @@ function useHome() {
   const [jobDetails, setJobDetails] = useState(JobDetails);
   const { alert, handleAlertOnClose, reset, showErrorMsg } = useAppAlert();
 
-  const fetchAllJobs = useCallback(async function () {
-    setIsLoading(true);
-    reset();
+  const fetchAllJobs = useCallback(
+    async function () {
+      setIsLoading(true);
+      reset();
 
-    try {
-      // Map MRT's pageIndex/pageSize to the API's page/size params
-      const response = await getJobs({ page: pagination.pageIndex, size: pagination.pageSize });
-      const content = response.data?.data?.content || [];
-      const paginationData = {
-        pageNo: response.data?.data?.pageNo ?? -1,
-        totalPages: response.data?.data?.totalPages ?? -1,
-        last: response.data?.data?.last ?? true,
-        totalElements: response.data?.data?.totalElements ?? -1,
-      };
+      try {
+        // Map MRT's pageIndex/pageSize to the API's page/size params
+        const response = await getJobs({
+          page: pagination.pageIndex,
+          size: pagination.pageSize,
+        });
+        const content = response.data?.data?.content || [];
+        const paginationData = {
+          pageNo: response.data?.data?.pageNo ?? -1,
+          totalPages: response.data?.data?.totalPages ?? -1,
+          last: response.data?.data?.last ?? true,
+          totalElements: response.data?.data?.totalElements ?? -1,
+        };
 
-      setJobs(content);
-      setPaginationMetadata(paginationData);
-    } catch (error) {
-      showErrorMsg(error);
-      setJobs([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [pagination]);
+        setJobs(content);
+        setPaginationMetadata(paginationData);
+      } catch (error) {
+        showErrorMsg(error);
+        setJobs([]);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [pagination],
+  );
 
   const fetchJobByApplicationId = useCallback(async function (applicationId) {
     setIsJobDetailsLoading(true);
@@ -72,7 +78,7 @@ function useHome() {
     isJobDetailsLoading,
     jobDetails,
     paginationMetadata,
-    pagination
+    pagination,
   };
 }
 

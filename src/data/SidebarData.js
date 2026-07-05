@@ -2,6 +2,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import PersonIcon from "@mui/icons-material/Person";
 import WorkIcon from "@mui/icons-material/Work";
 import SearchIcon from "@mui/icons-material/Search";
+import AddAlertIcon from "@mui/icons-material/AddAlert";
 
 /**
  * Sidebar navigation data with role-based visibility.
@@ -42,6 +43,12 @@ export const SidebarNavData = [
         label: "Listed Jobs",
         icon: SearchIcon,
         href: "/jobs/listed",
+      },
+      {
+        id: "job-alerts",
+        label: "Job Alerts",
+        icon: AddAlertIcon,
+        href: "/jobs/notices",
       },
     ],
   },

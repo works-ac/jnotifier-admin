@@ -6,7 +6,7 @@ import { Add, SwapHoriz, Work } from "@mui/icons-material";
 import useHome from "../hooks/useHome";
 import { MaterialReactTable, useMaterialReactTable } from "material-react-table";
 import AppAlert from "../components/AppAlert";
-import useMRTColDefsFactory from "../hooks/core/useMRTColDefsFactory";
+import useMRTColDefsFactory from "../hooks/mrt/useMRTColDefsFactory";
 import AddJobModal from "../components/AddJobModal";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 
