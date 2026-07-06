@@ -1,21 +1,45 @@
-import { Box, Button, Container, Divider, Paper, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  Divider,
+  Paper,
+  useTheme,
+} from "@mui/material";
 import React, { useState } from "react";
 import useAppCss from "../hooks/useAppCss";
 import Heading from "../components/Heading";
 import { Add, SwapHoriz, Work } from "@mui/icons-material";
 import useHome from "../hooks/useHome";
-import { MaterialReactTable, useMaterialReactTable } from "material-react-table";
+import {
+  MaterialReactTable,
+  useMaterialReactTable,
+} from "material-react-table";
 import AppAlert from "../components/AppAlert";
 import useMRTColDefsFactory from "../hooks/mrt/useMRTColDefsFactory";
-import AddJobModal from "../components/AddJobModal";
+import AddJobModal from "../components/dialogs/AddJobModal";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 
 function ListedJobs() {
   const theme = useTheme();
   const [addModalOpen, setAddModalOpen] = useState(false);
   const { GlobalPaperCss, GlobalTableCss } = useAppCss();
-  const { alert, handleAlertOnClose, isLoading, jobs, paginationMetadata, setPagination, pagination } = useHome();
-  const { ListedJobsColumns: columns, cancelToggle, confirmToggle, pendingToggle, isProcessing } = useMRTColDefsFactory();
+  const {
+    alert,
+    handleAlertOnClose,
+    isLoading,
+    jobs,
+    paginationMetadata,
+    setPagination,
+    pagination,
+  } = useHome();
+  const {
+    ListedJobsColumns: columns,
+    cancelToggle,
+    confirmToggle,
+    pendingToggle,
+    isProcessing,
+  } = useMRTColDefsFactory();
 
   const table = useMaterialReactTable({
     columns,
@@ -25,7 +49,7 @@ function ListedJobs() {
     rowCount: paginationMetadata?.totalElements ?? 0,
     pageCount: paginationMetadata?.totalPages ?? 0,
     onPaginationChange: setPagination,
-    state: { isLoading, pagination }
+    state: { isLoading, pagination },
   });
 
   /** Called by AddJobModal on successful creation — reset to page 1 to reload */
@@ -46,7 +70,11 @@ function ListedJobs() {
 
         <Divider />
 
-        <AppAlert alert={alert} handleAlertOnClose={handleAlertOnClose} type={alert?.type} />
+        <AppAlert
+          alert={alert}
+          handleAlertOnClose={handleAlertOnClose}
+          type={alert?.type}
+        />
 
         {/* Toolbar row */}
         <Box

@@ -14,6 +14,7 @@ function useNotices() {
   const [notices, setNotices] = useState(NoticeListings);
   const { alert, handleAlertOnClose, reset, showErrorMsg } = useAppAlert();
   const [isLoading, setIsLoading] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const fetchAllNotices = useCallback(
     async function () {
@@ -46,6 +47,10 @@ function useNotices() {
     [pagination],
   );
 
+  const handleDialogOnClose = useCallback(() => {
+    setIsDialogOpen((prev) => !prev);
+  }, []);
+
   useEffect(() => {
     fetchAllNotices();
   }, [pagination]);
@@ -58,6 +63,9 @@ function useNotices() {
     paginationMetadata,
     setPagination,
     pagination,
+    isDialogOpen,
+    handleDialogOnClose,
+    fetchAllNotices,
   };
 }
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import useAppCss from "../hooks/useAppCss";
 import {
   Box,
@@ -19,6 +19,7 @@ import {
   useMaterialReactTable,
 } from "material-react-table";
 import ConfirmationDialog from "../components/ConfirmationDialog";
+import AddNoticeAlert from "../components/dialogs/AddNoticeAlert";
 
 function NoticeListingPage() {
   const theme = useTheme();
@@ -31,6 +32,9 @@ function NoticeListingPage() {
     paginationMetadata,
     setPagination,
     pagination,
+    handleDialogOnClose,
+    isDialogOpen,
+    fetchAllNotices,
   } = useNotices();
 
   const {
@@ -56,6 +60,10 @@ function NoticeListingPage() {
     onPaginationChange: setPagination,
     state: { isLoading, pagination },
   });
+
+  const onSuccess = useCallback(async function () {
+    await fetchAllNotices();
+  }, []);
 
   return (
     <>
@@ -83,6 +91,7 @@ function NoticeListingPage() {
               variant="outlined"
               startIcon={<AddAlert fontSize="small" />}
               color="success"
+              onClick={handleDialogOnClose}
             >
               Add Job Alert
             </Button>
@@ -116,6 +125,14 @@ function NoticeListingPage() {
           open={showDialog}
           onCancel={() => setShowDialog(false)}
           onSuccess={row?.isActive ? markAsArchived : activateJobAlert}
+        />
+      )}
+
+      {isDialogOpen && (
+        <AddNoticeAlert
+          isOpen={isDialogOpen}
+          onClose={handleDialogOnClose}
+          onSuccess={onSuccess}
         />
       )}
     </>

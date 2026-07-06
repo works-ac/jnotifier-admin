@@ -170,11 +170,14 @@ function FileUpload({
 
       {/* Hint + file info */}
       <Box
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        gap={0.5}
-        width="100%"
+        component="div"
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          flexDirection: "column",
+          gap: 0.5,
+          width: "100%",
+        }}
       >
         <Typography variant="body2" color="primary" fontWeight={500}>
           {label}
@@ -207,7 +210,11 @@ function FileUpload({
 
         {!isSimulating && selectedFile && (
           <Box mt={1} display="flex" flexDirection="column" alignItems="center">
-            <Typography variant="caption" color="text.secondary" fontWeight={500}>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              fontWeight={500}
+            >
               Selected file: {selectedFile.name}
             </Typography>
             <Typography

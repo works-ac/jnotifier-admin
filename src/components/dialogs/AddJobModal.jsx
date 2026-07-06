@@ -24,10 +24,10 @@ import {
   Work,
 } from "@mui/icons-material";
 import PropTypes from "prop-types";
-import useAddJob from "../hooks/useAddJob";
-import AppAlert from "./AppAlert";
-import FileUpload from "./core/FileUpload";
-import TagsInput from "./core/TagsInput";
+import useAddJob from "../../hooks/useAddJob";
+import AppAlert from "../AppAlert";
+import FileUpload from "../core/FileUpload";
+import TagsInput from "../core/TagsInput";
 
 /**
  * AddJobModal — Dialog form to create a new job listing.
@@ -100,7 +100,6 @@ function AddJobModal({ open, onClose, onSuccess }) {
 
         {/* Outer column — all rows stacked */}
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
-
           {/* ── Row 1: Title (full width) ── */}
           <TextField
             label="Title"
@@ -110,7 +109,7 @@ function AddJobModal({ open, onClose, onSuccess }) {
             fullWidth
             required
             disabled={isSubmitting}
-            placeholder="e.g. Software Engineer – Government of India"
+            placeholder="e.g. Software Engineer - Government of India"
             sx={{ fontWeight: 700 }}
             slotProps={{
               input: {
@@ -119,7 +118,7 @@ function AddJobModal({ open, onClose, onSuccess }) {
                     <Title fontSize="small" />
                   </InputAdornment>
                 ),
-                style: { fontWeight: 700, color: theme.palette.primary.main }
+                style: { fontWeight: 700, color: theme.palette.primary.main },
               },
             }}
           />
@@ -130,7 +129,9 @@ function AddJobModal({ open, onClose, onSuccess }) {
               <DatePicker
                 label="Application Start Date"
                 value={form.applicationStartDate}
-                onChange={(val) => handleDateChange("applicationStartDate", val)}
+                onChange={(val) =>
+                  handleDateChange("applicationStartDate", val)
+                }
                 format="YYYY-MM-DD"
                 disabled={isSubmitting}
                 slotProps={{
@@ -177,7 +178,14 @@ function AddJobModal({ open, onClose, onSuccess }) {
           </Box>
 
           {/* ── Row 3: Apply Link | Short Description (2 cols) ── */}
-          <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", alignItems: "flex-start" }}>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 2,
+              flexWrap: "wrap",
+              alignItems: "flex-start",
+            }}
+          >
             <Box sx={{ flex: 1, minWidth: 200 }}>
               <TextField
                 label="Apply Link"
@@ -216,7 +224,10 @@ function AddJobModal({ open, onClose, onSuccess }) {
                 slotProps={{
                   input: {
                     startAdornment: (
-                      <InputAdornment position="start" sx={{ alignSelf: "flex-start", mt: 1 }}>
+                      <InputAdornment
+                        position="start"
+                        sx={{ alignSelf: "flex-start", mt: 1 }}
+                      >
                         <Description fontSize="small" />
                       </InputAdornment>
                     ),
@@ -244,15 +255,39 @@ function AddJobModal({ open, onClose, onSuccess }) {
           </Box>
 
           {/* ── Row 5: Markdown file | PDF file (2 equal cols) ── */}
-          <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", alignItems: "stretch" }}>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 2,
+              flexWrap: "wrap",
+              alignItems: "stretch",
+            }}
+          >
             {/* Markdown upload */}
-            <Box sx={{ flex: 1, minWidth: 220, display: "flex", flexDirection: "column", gap: 1 }}>
-              <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>
+            <Box
+              sx={{
+                flex: 1,
+                minWidth: 220,
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+              }}
+            >
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ fontWeight: 600 }}
+              >
                 Job Detail File{" "}
-                <Typography component="span" variant="caption" color="text.disabled">
+                <Typography
+                  component="span"
+                  variant="caption"
+                  color="text.disabled"
+                >
                   (.md — max 5 MB)
                 </Typography>
               </Typography>
+
               <FileUpload
                 accept=".md,text/markdown"
                 maxSizeMB={5}
@@ -267,10 +302,26 @@ function AddJobModal({ open, onClose, onSuccess }) {
             </Box>
 
             {/* PDF upload */}
-            <Box sx={{ flex: 1, minWidth: 220, display: "flex", flexDirection: "column", gap: 1 }}>
-              <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>
+            <Box
+              sx={{
+                flex: 1,
+                minWidth: 220,
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+              }}
+            >
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ fontWeight: 600 }}
+              >
                 Advertisement PDF{" "}
-                <Typography component="span" variant="caption" color="text.disabled">
+                <Typography
+                  component="span"
+                  variant="caption"
+                  color="text.disabled"
+                >
                   (.pdf — max 50 MB)
                 </Typography>
               </Typography>
@@ -287,7 +338,6 @@ function AddJobModal({ open, onClose, onSuccess }) {
               />
             </Box>
           </Box>
-
         </Box>
       </DialogContent>
 

@@ -31,3 +31,7 @@ export async function markNoticeAsActive(noticeId) {
     NOTICE_SERVICE_BASE_URL + "activate/" + noticeId,
   );
 }
+
+export async function addNotice(payload) {
+  return await ApplicationApi.post(NOTICE_SERVICE_BASE_URL + "add", payload);
+}
