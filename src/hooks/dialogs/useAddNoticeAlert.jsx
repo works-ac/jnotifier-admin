@@ -3,16 +3,13 @@ import { useCallback } from "react";
 import { AddNoticeAlertData } from "../../data/AddNoticeListing";
 import useAppAlert from "../useAppAlert";
 import { addNotice } from "../../services/NoticeService";
+import { AddJobAlertSchema } from "../../data/schema/AddJobAlertSchema";
 
 function useAddNoticeAlert() {
   const [form, setForm] = useState(AddNoticeAlertData);
   const [noticeAdvFile, setNoticeAdvFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { alert, handleAlertOnClose, reset, showErrorMsg } = useAppAlert();
-
-  useEffect(() => {
-    console.log(noticeAdvFile);
-  }, [noticeAdvFile]);
 
   const handleTextboxOnChange = useCallback(
     function (e) {
@@ -39,12 +36,21 @@ function useAddNoticeAlert() {
       setIsSubmitting(true);
       reset();
 
+      const payload = {
+        noticeTitle: form.noticeTitle,
+        noticeDesc: form.noticeDesc,
+        noticeTags: form.tags.join(",").trim(),
+      };
+
+      const result = AddJobAlertSchema.safeParse(payload);
+      if (!result.success) throw new Error(result.error.message);
+
       try {
         const formData = new FormData();
 
-        formData.append("noticeTitle", form.noticeTitle);
-        formData.append("noticeDesc", form.noticeDesc);
-        formData.append("noticeTags", form.tags.join(",").trim());
+        formData.append("noticeTitle", payload.noticeTitle);
+        formData.append("noticeDesc", payload.noticeDesc);
+        formData.append("noticeTags", payload.noticeTags);
 
         if (noticeAdvFile) {
           formData.append("noticeAdvFile", noticeAdvFile);

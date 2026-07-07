@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Box, Button, Chip, InputAdornment, Stack, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  Chip,
+  InputAdornment,
+  Stack,
+  TextField,
+} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import PropTypes from "prop-types";
 import useAppCss from "../../hooks/useAppCss";
@@ -14,9 +21,15 @@ import { Sell } from "@mui/icons-material";
  *   onRemoveTag – (tag: string) => void
  *   disabled    – boolean
  */
-function TagsInput({ tags = [], onAddTag, onRemoveTag, disabled = false }) {
+function TagsInput({
+  tags = [],
+  onAddTag,
+  onRemoveTag,
+  disabled = false,
+  isRequired = false,
+}) {
   const [input, setInput] = useState("");
-  const { GlobalChipCss } = useAppCss();
+  const { GlobalChipCss, RequiredFieldCss } = useAppCss();
 
   const handleAdd = () => {
     if (!input.trim()) return;
@@ -33,9 +46,24 @@ function TagsInput({ tags = [], onAddTag, onRemoveTag, disabled = false }) {
   };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", width: "100%", overflow: "hidden" }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        overflow: "hidden",
+      }}
+    >
       {/* Input row */}
-      <Box sx={{ display: "flex", gap: 1, alignItems: "center", width: "100%", my: 1 }}>
+      <Box
+        sx={{
+          display: "flex",
+          gap: 1,
+          alignItems: "center",
+          width: "100%",
+          my: 1,
+        }}
+      >
         <TextField
           label="Add a tag"
           placeholder="e.g. Engineering"
@@ -51,9 +79,11 @@ function TagsInput({ tags = [], onAddTag, onRemoveTag, disabled = false }) {
                 <InputAdornment position="start">
                   <Sell fontSize="small" color="primary" />
                 </InputAdornment>
-              )
-            }
+              ),
+            },
           }}
+          required={isRequired}
+          sx={RequiredFieldCss}
         />
         <Button
           variant="contained"
@@ -75,7 +105,7 @@ function TagsInput({ tags = [], onAddTag, onRemoveTag, disabled = false }) {
             flexWrap: "wrap",
             gap: 1,
             width: "100%",
-            overflow: "hidden"
+            overflow: "hidden",
           }}
         >
           {tags.map((tag) => (
@@ -100,6 +130,7 @@ TagsInput.propTypes = {
   onAddTag: PropTypes.func.isRequired,
   onRemoveTag: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
+  isRequired: PropTypes.bool,
 };
 
 export default React.memo(TagsInput);
