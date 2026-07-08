@@ -21,9 +21,11 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import useAppCss from "../../hooks/useAppCss";
 import Markdown from "react-markdown";
+import useViewNoticeModal from "../../hooks/dialogs/useViewNoticeModal";
+import CircularProgressLoader from "../../components/CircluarProgressLoader";
 
 function ViewNoticeModal({
   isOpen = false,
@@ -37,8 +39,23 @@ function ViewNoticeModal({
     GlobalChipCss,
     GlobalAccordianCss,
   } = useAppCss();
+  const { isLoading, viewsDetails, handleGetPageViews } = useViewNoticeModal();
+
+  useEffect(() => {
+    if (isOpen && noticeDetails?.id) {
+      handleGetPageViews(noticeDetails.id);
+    }
+  }, [isOpen, noticeDetails]);
 
   if (!isOpen) return null;
+
+  if (isLoading)
+    return (
+      <CircularProgressLoader
+        text="We're loading some of the data related to this notice, please wait..."
+        takeHeight
+      />
+    );
 
   return (
     <Dialog maxWidth="lg" fullWidth open={isOpen}>
@@ -146,7 +163,13 @@ function ViewNoticeModal({
         </Box>
         <Box
           component="div"
-          sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1, flexWrap:"wrap" }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            mb: 1,
+            flexWrap: "wrap",
+          }}
         >
           {noticeDetails.tags
             ?.split(",")
