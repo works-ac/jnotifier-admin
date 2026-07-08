@@ -164,7 +164,6 @@ function AddNoticeAlert({ onClose, onSuccess, isOpen }) {
         <Button
           variant="contained"
           color="success"
-          onClick={onClose}
           startIcon={
             isSubmitting ? (
               <CircularProgress size={16} color="secondary" />

@@ -32,6 +32,16 @@ export async function markNoticeAsActive(noticeId) {
   );
 }
 
+export async function deleteNotice(noticeId) {
+  return await ApplicationApi.delete(
+    NOTICE_SERVICE_BASE_URL + "delete/" + noticeId,
+  );
+}
+
 export async function addNotice(payload) {
   return await ApplicationApi.post(NOTICE_SERVICE_BASE_URL + "add", payload);
+}
+
+export async function updateNotice(payload) {
+  return await ApplicationApi.put(NOTICE_SERVICE_BASE_URL + "update", payload);
 }

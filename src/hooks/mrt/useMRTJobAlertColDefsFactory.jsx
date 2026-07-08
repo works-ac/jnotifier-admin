@@ -1,10 +1,11 @@
 import React, { useCallback, useMemo, useState } from "react";
 import useAppCss from "../useAppCss";
 import Markdown from "react-markdown";
-import { Box, Chip, IconButton } from "@mui/material";
+import { Box, Chip, IconButton, Paper } from "@mui/material";
 import dayjs from "dayjs";
 import {
   Delete,
+  DeleteForever,
   Edit,
   Pause,
   PlayCircle,
@@ -14,6 +15,7 @@ import AppTooltip from "../../components/core/AppTooltip";
 import { toast } from "react-toastify";
 import { getToastNotification } from "../../helpers";
 import {
+  deleteNotice,
   markNoticeAsActive,
   markNoticeAsArchived,
 } from "../../services/NoticeService";
@@ -22,6 +24,8 @@ function useMRTJobAlertColDefsFactory() {
   const { GlobalChipCss } = useAppCss();
   const [showDialog, setShowDialog] = useState(false);
   const [showViewDialog, setShowViewDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
   const [row, setRow] = useState(null);
   const [dialogContent, setDialogContent] = useState(null);
   const [loading, setLoading] = useState({
@@ -33,6 +37,11 @@ function useMRTJobAlertColDefsFactory() {
   const handleViewBtn = useCallback(function (rowDetails) {
     setRow(rowDetails);
     setShowViewDialog(true);
+  }, []);
+
+  const handleEditBtn = useCallback(function (rowDetails) {
+    setRow(rowDetails);
+    setShowEditDialog(true);
   }, []);
 
   const handleMarkAsArchivedBtn = useCallback(function (rowDetails) {
@@ -48,6 +57,14 @@ function useMRTJobAlertColDefsFactory() {
     setShowDialog(true);
     setDialogContent(
       "Are you sure you want to mark this job alert as active? This will make the job alert active and it will be visible to users in the job alerts listing.",
+    );
+  }, []);
+
+  const handleDeleteNoticeBtn = useCallback(function (rowDetails) {
+    setRow(rowDetails);
+    setShowDeleteDialog(true);
+    setDialogContent(
+      "Are you sure you want to delete this job alert? This action cannot be undone as you will not able to recover this job alert from your admin panel.",
     );
   }, []);
 
@@ -88,6 +105,27 @@ function useMRTJobAlertColDefsFactory() {
         toast.error(message, getToastNotification());
       } finally {
         setLoading((prev) => ({ ...prev, activate: false }));
+      }
+    },
+    [row],
+  );
+
+  const deleteJobAlert = useCallback(
+    async function () {
+      if (!row) return;
+
+      setLoading((prev) => ({ ...prev, delete: true }));
+
+      try {
+        await deleteNotice(row.id);
+        globalThis.location.reload();
+      } catch (error) {
+        const message =
+          error?.response?.error?.message ??
+          "Failed to mark this job alert as active.";
+        toast.error(message, getToastNotification());
+      } finally {
+        setLoading((prev) => ({ ...prev, delete: false }));
       }
     },
     [row],
@@ -174,6 +212,45 @@ function useMRTJobAlertColDefsFactory() {
         size: 200,
       },
       {
+        header: "Notice Deletion Status",
+        accessorKey: "isDeleted",
+        Cell: ({ cell }) => {
+          const value = cell?.getValue() ?? null;
+
+          if (value === null) return null;
+
+          if (value === false) {
+            return (
+              <Chip
+                label="Active"
+                sx={(theme) => ({
+                  ...GlobalChipCss,
+                  borderColor: theme.palette.success.main,
+                  outline: "none",
+                  color: theme.palette.success.main,
+                })}
+                color="error"
+              />
+            );
+          }
+
+          return (
+            <Chip
+              label="Deleted"
+              sx={(theme) => ({
+                ...GlobalChipCss,
+                borderColor: theme.palette.error.main,
+                outline: "none",
+                color: theme.palette.error.main,
+              })}
+              color="error"
+              icon={<DeleteForever fontSize="small" color="error" />}
+            />
+          );
+        },
+        size: 200,
+      },
+      {
         accessorKey: "createdAt",
         header: "Post Date",
         Cell: ({ cell }) => {
@@ -195,23 +272,34 @@ function useMRTJobAlertColDefsFactory() {
         Cell: ({ row }) => {
           const rowData = row?.original ?? {};
           const isActive = rowData?.isActive ?? false;
+          const isDeleted = rowData?.isDeleted ?? false;
 
           return (
-            <Box
-              component="div"
+            <Paper
+              variant="elevation"
               sx={{
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
+                borderRadius: 2,
+                backgroundColor: "transparent",
+                p: 1,
+                maxWidth: "max-content",
               }}
+              elevation={1}
             >
-              <AppTooltip title="Edit">
-                <IconButton color="warning">
-                  <Edit fontSize="small" />
-                </IconButton>
-              </AppTooltip>
+              {!isDeleted && (
+                <AppTooltip title="Edit">
+                  <IconButton
+                    color="warning"
+                    onClick={() => handleEditBtn(rowData)}
+                  >
+                    <Edit fontSize="small" />
+                  </IconButton>
+                </AppTooltip>
+              )}
 
-              {isActive && (
+              {isActive && !isDeleted && (
                 <AppTooltip title="Mark this job alert as archived">
                   <IconButton
                     color="success"
@@ -222,10 +310,10 @@ function useMRTJobAlertColDefsFactory() {
                 </AppTooltip>
               )}
 
-              {!isActive && (
+              {!isActive && !isDeleted && (
                 <AppTooltip title="Mark this job alert as active">
                   <IconButton
-                    color="success"
+                    color="error"
                     onClick={() => handleMarkAsActiveBtn(rowData)}
                   >
                     <PlayCircle fontSize="small" />
@@ -233,11 +321,16 @@ function useMRTJobAlertColDefsFactory() {
                 </AppTooltip>
               )}
 
-              <AppTooltip title="Delete this job alert">
-                <IconButton color="error">
-                  <Delete fontSize="small" />
-                </IconButton>
-              </AppTooltip>
+              {!isDeleted && (
+                <AppTooltip title="Delete this job alert">
+                  <IconButton
+                    color="error"
+                    onClick={() => handleDeleteNoticeBtn(rowData)}
+                  >
+                    <Delete fontSize="small" />
+                  </IconButton>
+                </AppTooltip>
+              )}
 
               <AppTooltip title="View details">
                 <IconButton
@@ -247,13 +340,13 @@ function useMRTJobAlertColDefsFactory() {
                   <Visibility fontSize="small" />
                 </IconButton>
               </AppTooltip>
-            </Box>
+            </Paper>
           );
         },
         size: 30,
       },
     ],
-    [row, showDialog, handleViewBtn],
+    [row, showDialog, handleViewBtn, showDeleteDialog, handleEditBtn],
   );
 
   return {
@@ -261,12 +354,17 @@ function useMRTJobAlertColDefsFactory() {
     dialogContent,
     showDialog,
     showViewDialog,
+    showEditDialog,
     loading,
     row,
+    showDeleteDialog,
     markAsArchived,
     activateJobAlert,
     setShowDialog,
     setShowViewDialog,
+    setShowDeleteDialog,
+    setShowEditDialog,
+    deleteJobAlert,
   };
 }
 

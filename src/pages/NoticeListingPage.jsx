@@ -20,6 +20,8 @@ import {
 } from "material-react-table";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import AddNoticeAlert from "../components/dialogs/AddNoticeAlert";
+import ViewNoticeModal from "../components/dialogs/ViewNoticeModal";
+import UpdateNoticeAlertModal from "../components/dialogs/UpdateNoticeAlertModal";
 
 function NoticeListingPage() {
   const theme = useTheme();
@@ -42,12 +44,17 @@ function NoticeListingPage() {
     showViewDialog,
     dialogContent,
     showDialog,
+    showEditDialog,
     loading,
     row,
+    showDeleteDialog,
+    setShowDeleteDialog,
     setShowDialog,
     setShowViewDialog,
+    setShowEditDialog,
     markAsArchived,
     activateJobAlert,
+    deleteJobAlert,
   } = useMRTJobAlertColDefsFactory();
 
   const table = useMaterialReactTable({
@@ -125,6 +132,42 @@ function NoticeListingPage() {
           open={showDialog}
           onCancel={() => setShowDialog(false)}
           onSuccess={row?.isActive ? markAsArchived : activateJobAlert}
+        />
+      )}
+
+      {showDeleteDialog && (
+        <ConfirmationDialog
+          Icon={QuestionMark}
+          heading="Confirmation"
+          isLoading={loading.delete}
+          text={
+            <Typography
+              sx={{ textAlign: "justify", fontWeight: 700 }}
+              variant="body1"
+            >
+              {dialogContent}
+            </Typography>
+          }
+          open={showDeleteDialog}
+          onCancel={() => setShowDeleteDialog(false)}
+          onSuccess={deleteJobAlert}
+        />
+      )}
+
+      {showViewDialog && (
+        <ViewNoticeModal
+          isOpen={showViewDialog}
+          noticeDetails={row}
+          onClose={() => setShowViewDialog(false)}
+        />
+      )}
+
+      {showEditDialog && (
+        <UpdateNoticeAlertModal
+          isOpen={showEditDialog}
+          noticeDetails={row}
+          onClose={() => setShowEditDialog(false)}
+          onSuccess={onSuccess}
         />
       )}
 

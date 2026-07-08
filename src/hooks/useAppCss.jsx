@@ -41,6 +41,19 @@ function useAppCss() {
     [],
   );
 
+  const GlobalDialogTitle = useMemo(
+    () => ({
+      display: "flex",
+      alignItems: "center",
+      gap: 1,
+      fontWeight: 700,
+      bgcolor: "primary.main",
+      color: "white",
+      py: 2,
+    }),
+    [],
+  );
+
   const GlobalTableCss = useMemo(
     () => ({
       muiTablePaperProps: {
@@ -86,6 +99,13 @@ function useAppCss() {
     [],
   );
 
+  const GlobalNormalChipCss = useMemo(
+    () => ({
+      borderRadius: "8px",
+    }),
+    [],
+  );
+
   return {
     RequiredFieldCss,
     RequiredSwitchCss,
@@ -93,7 +113,9 @@ function useAppCss() {
     GlobalAccordianCss,
     GlobalDialogDividerCss,
     GlobalTableCss,
-    GlobalChipCss
+    GlobalChipCss,
+    GlobalDialogTitle,
+    GlobalNormalChipCss,
   };
 }
 
