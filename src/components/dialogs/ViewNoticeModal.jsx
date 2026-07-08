@@ -26,6 +26,7 @@ import useAppCss from "../../hooks/useAppCss";
 import Markdown from "react-markdown";
 import useViewNoticeModal from "../../hooks/dialogs/useViewNoticeModal";
 import CircularProgressLoader from "../../components/CircluarProgressLoader";
+import PropTypes from "prop-types";
 
 function ViewNoticeModal({
   isOpen = false,
@@ -39,13 +40,7 @@ function ViewNoticeModal({
     GlobalChipCss,
     GlobalAccordianCss,
   } = useAppCss();
-  const { isLoading, viewsDetails, handleGetPageViews } = useViewNoticeModal();
-
-  useEffect(() => {
-    if (isOpen && noticeDetails?.id) {
-      handleGetPageViews(noticeDetails.id);
-    }
-  }, [isOpen, noticeDetails]);
+  const { isLoading, viewsDetails } = useViewNoticeModal();
 
   if (!isOpen) return null;
 
@@ -66,6 +61,7 @@ function ViewNoticeModal({
           flexDirection: "column",
           alignItems: "start",
           py: 0,
+          rowGap: 0,
         }}
       >
         <Box
@@ -84,7 +80,8 @@ function ViewNoticeModal({
               color: "white",
               borderRadius: 2,
               "&:hover": {
-                color: theme.palette.error.main,
+                color: "white",
+                backgroundColor: theme.palette.error.main,
               },
             })}
           >
@@ -111,6 +108,7 @@ function ViewNoticeModal({
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
+            flexWrap: "wrap",
           }}
         >
           <Typography variant="h3" sx={{ fontWeight: 700 }}>
@@ -143,6 +141,21 @@ function ViewNoticeModal({
               }
             />
 
+            <Chip
+              label={`${viewsDetails?.pageViews ?? 0} Views`}
+              sx={(theme) => ({
+                ...GlobalNormalChipCss,
+                color: theme.palette.success.main,
+                backgroundColor: "white",
+                border: `1px solid ${theme.palette.success.main}`,
+                outline: "none",
+                fontWeight: 700,
+                fontFamily: "Roboto, Arial, sans-serif",
+                textTransform: "uppercase",
+              })}
+              icon={<Visibility fontSize="small" color="success" />}
+            />
+
             {noticeDetails?.isDeleted && (
               <Chip
                 label="Deleted"
@@ -161,6 +174,7 @@ function ViewNoticeModal({
             )}
           </Box>
         </Box>
+
         <Box
           component="div"
           sx={{
@@ -233,5 +247,11 @@ function ViewNoticeModal({
     </Dialog>
   );
 }
+
+ViewNoticeModal.propTypes = {
+  isOpen: PropTypes.bool,
+  onClose: PropTypes.func,
+  noticeDetails: PropTypes.object,
+};
 
 export default ViewNoticeModal;

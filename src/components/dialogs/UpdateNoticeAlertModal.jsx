@@ -7,6 +7,7 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
+  IconButton,
   TextField,
   Typography,
   useTheme,
@@ -22,6 +23,7 @@ import AppAlert from "../AppAlert";
 import Notes from "../Notes";
 import useAppCss from "../../hooks/useAppCss";
 import ConfirmationDialog from "../ConfirmationDialog";
+import FlexBox from "../styled/FlexBox";
 
 /**
  * UpdateNoticeAlertModal
@@ -37,7 +39,7 @@ import ConfirmationDialog from "../ConfirmationDialog";
  */
 function UpdateNoticeAlertModal({ isOpen, onClose, onSuccess, noticeDetails }) {
   const theme = useTheme();
-  const { RequiredFieldCss } = useAppCss();
+  const { RequiredFieldCss, GlobalDialogTitle } = useAppCss();
 
   const {
     form,
@@ -96,30 +98,57 @@ function UpdateNoticeAlertModal({ isOpen, onClose, onSuccess, noticeDetails }) {
   return (
     <>
       <Dialog open={isOpen} maxWidth="lg" fullWidth>
-        {/* ── Title bar ── */}
-        <DialogTitle
+        <Box
+          component="div"
           sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1,
-            fontWeight: 700,
-            bgcolor: "warning.main",
-            color: "white",
-            py: 2,
+            ...GlobalDialogTitle,
+            backgroundColor: "warning.main",
+            flexDirection: "column",
+            alignItems: "start",
+            justifyContent: "center",
+            py: 0,
+            rowGap: 0,
           }}
         >
-          <NotificationImportantIcon fontSize="small" />
-          <Typography
-            variant="h6"
-            sx={{ fontWeight: 700, fontFamily: "Roboto" }}
+          <FlexBox
+            sx={{
+              alignItems: "center",
+              justifyContent: "flex-end",
+              width: "100%",
+              p: 1,
+            }}
           >
-            Update Notice
-          </Typography>
-        </DialogTitle>
+            <IconButton
+              onClick={onClose}
+              sx={(theme) => ({
+                color: "white",
+                borderRadius: 2,
+                "&:hover": { backgroundColor: theme.palette.error.main },
+              })}
+            >
+              <Close fontSize="medium" />
+            </IconButton>
+          </FlexBox>
+
+          <DialogTitle
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <NotificationImportantIcon fontSize="small" />
+            <Typography
+              variant="h6"
+              sx={{ fontWeight: 700, fontFamily: "Roboto" }}
+            >
+              Update Notice
+            </Typography>
+          </DialogTitle>
+        </Box>
 
         <Divider />
 
-        {/* ── Form body ── */}
         <DialogContent sx={{ py: 3 }}>
           <Box
             component="div"
@@ -180,17 +209,7 @@ function UpdateNoticeAlertModal({ isOpen, onClose, onSuccess, noticeDetails }) {
         <Divider />
 
         {/* ── Actions ── */}
-        <DialogActions sx={{ px: 3, py: 2, gap: 1 }}>
-          <Button
-            variant="text"
-            color="error"
-            onClick={onClose}
-            disabled={isSubmitting}
-            startIcon={<Close fontSize="small" />}
-          >
-            Close
-          </Button>
-
+        <DialogActions sx={{ px: 3, py: 2 }}>
           <Button
             variant="contained"
             color="warning"
