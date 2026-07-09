@@ -19,6 +19,7 @@ import AppAlert from "../components/AppAlert";
 import useMRTColDefsFactory from "../hooks/mrt/useMRTColDefsFactory";
 import AddJobModal from "../components/dialogs/AddJobModal";
 import ConfirmationDialog from "../components/ConfirmationDialog";
+import ViewJobModal from "../components/dialogs/ViewJobModal";
 
 function ListedJobs() {
   const theme = useTheme();
@@ -37,8 +38,11 @@ function ListedJobs() {
     ListedJobsColumns: columns,
     cancelToggle,
     confirmToggle,
+    setShowViewDialog,
     pendingToggle,
     isProcessing,
+    jobDetails,
+    showViewDialog,
   } = useMRTColDefsFactory();
 
   const table = useMaterialReactTable({
@@ -87,7 +91,7 @@ function ListedJobs() {
           }}
         >
           <Button
-            variant="contained"
+            variant="outlined"
             color="success"
             startIcon={<Add fontSize="small" />}
             onClick={() => setAddModalOpen(true)}
@@ -120,6 +124,14 @@ function ListedJobs() {
         onClose={() => setAddModalOpen(false)}
         onSuccess={handleAddSuccess}
       />
+
+      {showViewDialog && (
+        <ViewJobModal
+          isOpen={showViewDialog}
+          jobDetails={jobDetails}
+          onClose={() => setShowViewDialog(false)}
+        />
+      )}
     </Container>
   );
 }

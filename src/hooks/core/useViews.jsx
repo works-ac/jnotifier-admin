@@ -1,11 +1,11 @@
 import React, { useCallback, useState } from "react";
 import { getPageViews } from "../../services/ViewsService";
 
-function useViewNoticeModal() {
+function useViews(relativeUrl) {
   const [isLoading, setIsLoading] = useState(false);
   const [viewsDetails, setViewsDetails] = useState(null);
   const visitedPage =
-    import.meta.env.VITE_PRODUCTION_ADMIN_PANEL_URL + "/notice";
+    import.meta.env.VITE_PRODUCTION_ADMIN_PANEL_URL + relativeUrl;
 
   const handleGetPageViews = useCallback(async function (noticeId) {
     setIsLoading(true);
@@ -25,4 +25,4 @@ function useViewNoticeModal() {
   return { viewsDetails, isLoading, handleGetPageViews };
 }
 
-export default useViewNoticeModal;
+export default useViews;

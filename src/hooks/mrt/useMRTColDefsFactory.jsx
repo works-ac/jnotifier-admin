@@ -1,6 +1,19 @@
-import { DateRangeTwoTone, Delete, Pause, PlayArrow, Sell } from "@mui/icons-material";
-import { Chip, CircularProgress, IconButton, Tooltip } from "@mui/material";
-import { useMemo, useState } from "react";
+import {
+  DateRangeTwoTone,
+  Delete,
+  Pause,
+  PlayArrow,
+  Sell,
+  Visibility,
+} from "@mui/icons-material";
+import {
+  Chip,
+  CircularProgress,
+  IconButton,
+  Paper,
+  Tooltip,
+} from "@mui/material";
+import { useCallback, useMemo, useState } from "react";
 import useAppCss from "../useAppCss";
 import { Box } from "@mui/material";
 import Markdown from "react-markdown";
@@ -11,6 +24,8 @@ import { getToastNotification } from "../../helpers";
 export default function useMRTColDefsFactory() {
   const { GlobalChipCss } = useAppCss();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showViewDialog, setShowViewDialog] = useState(false);
+  const [jobDetails, setJobDetails] = useState(null);
 
   // ── Confirmation dialog state ────────────────────────────────────────────
   // Holds the job that is pending a status toggle; null means dialog is closed.
@@ -49,146 +64,188 @@ export default function useMRTColDefsFactory() {
     setPendingToggle(null);
   };
 
-  // ── Column definitions ───────────────────────────────────────────────────
-  const ListedJobsColumns = useMemo(() => [
-    { accessorKey: "applicationId", header: "Application Id" },
-    { accessorKey: "title", header: "Title" },
-    {
-      accessorKey: "applicationStartDate",
-      header: "Application Start Date",
-      Cell: ({ cell }) => (
-        <Chip
-          label={cell?.getValue()}
-          sx={GlobalChipCss}
-          icon={<DateRangeTwoTone fontSize="small" color="success" />}
-          variant="outlined"
-        />
-      ),
-    },
-    {
-      accessorKey: "applicationEndDate",
-      header: "Application End Date",
-      Cell: ({ cell }) => (
-        <Chip
-          label={cell?.getValue()}
-          sx={GlobalChipCss}
-          icon={<DateRangeTwoTone fontSize="small" color="success" />}
-          variant="outlined"
-        />
-      ),
-    },
-    {
-      accessorKey: "createdOn",
-      header: "Post Date",
-      Cell: ({ cell }) => (
-        <Chip
-          label={new Date(cell?.getValue())?.toLocaleDateString("en-IN")?.split("/")?.reverse().join("-")}
-          sx={GlobalChipCss}
-          icon={<DateRangeTwoTone fontSize="small" color="success" />}
-          variant="outlined"
-        />
-      ),
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      Cell: ({ cell }) => {
-        const value = cell?.getValue() ?? "";
+  const handleViewBtn = useCallback(async function (rowData) {
+    if (!rowData) return;
 
-        if (value) {
+    setJobDetails(rowData);
+    setShowViewDialog(true);
+  }, []);
+
+  // ── Column definitions ───────────────────────────────────────────────────
+  const ListedJobsColumns = useMemo(
+    () => [
+      { accessorKey: "applicationId", header: "Application Id" },
+      { accessorKey: "title", header: "Title" },
+      {
+        accessorKey: "applicationStartDate",
+        header: "Application Start Date",
+        Cell: ({ cell }) => (
+          <Chip
+            label={cell?.getValue()}
+            sx={GlobalChipCss}
+            icon={<DateRangeTwoTone fontSize="small" color="success" />}
+            variant="outlined"
+          />
+        ),
+      },
+      {
+        accessorKey: "applicationEndDate",
+        header: "Application End Date",
+        Cell: ({ cell }) => (
+          <Chip
+            label={cell?.getValue()}
+            sx={GlobalChipCss}
+            icon={<DateRangeTwoTone fontSize="small" color="success" />}
+            variant="outlined"
+          />
+        ),
+      },
+      {
+        accessorKey: "createdOn",
+        header: "Post Date",
+        Cell: ({ cell }) => (
+          <Chip
+            label={new Date(cell?.getValue())
+              ?.toLocaleDateString("en-IN")
+              ?.split("/")
+              ?.reverse()
+              .join("-")}
+            sx={GlobalChipCss}
+            icon={<DateRangeTwoTone fontSize="small" color="success" />}
+            variant="outlined"
+          />
+        ),
+      },
+      {
+        accessorKey: "status",
+        header: "Status",
+        Cell: ({ cell }) => {
+          const value = cell?.getValue() ?? "";
+
+          if (value) {
+            return (
+              <Chip label="ACTIVE" sx={GlobalChipCss} variant="outlined" />
+            );
+          }
+
           return (
             <Chip
-              label="ACTIVE"
-              sx={GlobalChipCss}
+              label="IN-ACTIVE"
+              sx={(theme) => ({
+                ...GlobalChipCss,
+                border: `1px solid ${theme.palette.error.main}`,
+                color: theme.palette.error.main,
+              })}
               variant="outlined"
             />
           );
-        }
-
-        return (
-          <Chip
-            label="IN-ACTIVE"
-            sx={theme => ({
-              ...GlobalChipCss,
-              border: `1px solid ${theme.palette.error.main}`,
-              color: theme.palette.error.main,
-            })}
-            variant="outlined"
-          />
-        );
+        },
       },
-    },
-    {
-      accessorKey: "tags",
-      header: "Tags",
-      Cell: ({ cell }) => {
-        const value = cell?.getValue() ?? "";
+      {
+        accessorKey: "tags",
+        header: "Tags",
+        Cell: ({ cell }) => {
+          const value = cell?.getValue() ?? "";
 
-        if (!value) return null;
+          if (!value) return null;
 
-        return value.split(",").filter(item => item.trim()).map(item => (
-          <Chip
-            label={item}
-            key={item}
-            sx={{ ...GlobalChipCss, m: 1 }}
-            icon={<Sell fontSize="small" color="success" />}
-          />
-        ));
+          return value
+            .split(",")
+            .filter((item) => item.trim())
+            .map((item) => (
+              <Chip
+                label={item}
+                key={item}
+                sx={{ ...GlobalChipCss, m: 1 }}
+                icon={<Sell fontSize="small" color="success" />}
+              />
+            ));
+        },
       },
-    },
-    {
-      accessorKey: "shortDescription",
-      header: "Short Description",
-      Cell: ({ cell }) => (
-        <Box component="div" sx={{ textAlign: "justify" }}>
-          <Markdown>{cell?.getValue()}</Markdown>
-        </Box>
-      ),
-    },
-    { accessorKey: "advNo", header: "Advertisement No", size: 10 },
-    {
-      id: "actions",
-      header: "Actions",
-      size: 10,
-      Cell: ({ row }) => {
-        const record = row.original;
-        const isActive = record?.status;
+      {
+        accessorKey: "shortDescription",
+        header: "Short Description",
+        Cell: ({ cell }) => (
+          <Box component="div" sx={{ textAlign: "justify" }}>
+            <Markdown>{cell?.getValue()}</Markdown>
+          </Box>
+        ),
+      },
+      { accessorKey: "advNo", header: "Advertisement No", size: 10 },
+      {
+        id: "actions",
+        header: "Actions",
+        size: 10,
+        Cell: ({ row }) => {
+          const record = row.original;
+          const isActive = record?.status;
 
-        return (
-          <Box sx={{ display: "flex", gap: 1 }}>
-            {/* Toggle active/in-active — opens confirmation dialog */}
-            <Tooltip
-              title={isActive ? "Mark as In-Active" : "Mark as Active"}
-              arrow
+          return (
+            <Paper
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: 2,
+                backgroundColor: "transparent",
+                p: 1,
+                maxWidth: "max-content",
+              }}
+              elevation={1}
             >
-              <span>
+              <Tooltip
+                title={isActive ? "Mark as In-Active" : "Mark as Active"}
+                arrow
+              >
+                <span>
+                  <IconButton
+                    color="primary"
+                    disabled={isProcessing}
+                    onClick={() =>
+                      requestToggle(record.applicationId, !isActive)
+                    }
+                  >
+                    {isProcessing ? (
+                      <CircularProgress size={16} color="secondary" />
+                    ) : isActive ? (
+                      <Pause fontSize="small" color="success" />
+                    ) : (
+                      <PlayArrow fontSize="small" color="secondary" />
+                    )}
+                  </IconButton>
+                </span>
+              </Tooltip>
+
+              <Tooltip title="Views" arrow>
                 <IconButton
                   color="primary"
-                  disabled={isProcessing}
-                  onClick={() => requestToggle(record.applicationId, !isActive)}
+                  onClick={() => handleViewBtn(row?.original)}
                 >
-                  {isProcessing ? (
-                    <CircularProgress size={16} color="secondary" />
-                  ) : (
-                    isActive ? <Pause fontSize="small" /> : <PlayArrow fontSize="small" />
-                  )}
+                  <Visibility fontSize="small" />
                 </IconButton>
-              </span>
-            </Tooltip>
+              </Tooltip>
 
-            <Tooltip title="Delete Job" arrow>
-              <IconButton
-                color="secondary"
-                onClick={() => handleDelete(record.id)}
-              >
-                <Delete fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          </Box>
-        );
+              <Tooltip title="Delete Job" arrow>
+                <IconButton color="error">
+                  <Delete fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            </Paper>
+          );
+        },
       },
-    },
-  ], [isProcessing]);
+    ],
+    [isProcessing],
+  );
 
-  return { ListedJobsColumns, pendingToggle, cancelToggle, confirmToggle, isProcessing };
+  return {
+    ListedJobsColumns,
+    pendingToggle,
+    cancelToggle,
+    confirmToggle,
+    setShowViewDialog,
+    isProcessing,
+    showViewDialog,
+    jobDetails,
+  };
 }

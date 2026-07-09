@@ -33,7 +33,12 @@ const AppTheme = createTheme({
     },
   },
   palette: {
-    primary: { main: "#000080", A700: "#2563eb", hover: "#000066" },
+    primary: {
+      main: "#000080",
+      A700: "#2563eb",
+      hover: "#000066",
+      A300: "#7dd3fc",
+    },
     secondary: {
       main: "#737373",
       A100: "#cbd5e1",

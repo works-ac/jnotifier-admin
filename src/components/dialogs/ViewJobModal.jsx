@@ -1,4 +1,5 @@
 import {
+  CalendarMonth,
   Check,
   Close,
   DeleteForever,
@@ -30,13 +31,10 @@ import Markdown from "react-markdown";
 import useViewNoticeModal from "../../hooks/dialogs/useViewNoticeModal";
 import CircularProgressLoader from "../../components/CircluarProgressLoader";
 import PropTypes from "prop-types";
+import useViews from "../../hooks/core/useViews";
 import FlexBox from "../styled/FlexBox";
 
-function ViewNoticeModal({
-  isOpen = false,
-  onClose = () => {},
-  noticeDetails = {},
-}) {
+function ViewJobModal({ isOpen = false, onClose = () => {}, jobDetails = {} }) {
   const theme = useTheme();
   const {
     GlobalDialogTitle,
@@ -44,21 +42,21 @@ function ViewNoticeModal({
     GlobalChipCss,
     GlobalAccordianCss,
   } = useAppCss();
-  const { isLoading, viewsDetails, handleGetPageViews } = useViewNoticeModal();
+  const { isLoading, viewsDetails, handleGetPageViews } = useViews("/jobs");
 
   useEffect(() => {
-    if (isOpen && noticeDetails) {
-      handleGetPageViews(noticeDetails.id);
+    if (isOpen && jobDetails) {
+      handleGetPageViews(jobDetails.applicationId);
     }
-  }, [noticeDetails, isOpen]);
+  }, [jobDetails, isOpen]);
 
   const refreshView = useCallback(
     async function () {
-      if (isOpen && noticeDetails) {
-        await handleGetPageViews(noticeDetails.id);
+      if (isOpen && jobDetails) {
+        await handleGetPageViews(jobDetails.applicationId);
       }
     },
-    [noticeDetails, isOpen],
+    [jobDetails, isOpen],
   );
 
   if (!isOpen) return null;
@@ -131,19 +129,19 @@ function ViewNoticeModal({
           }}
         >
           <Typography variant="h3" sx={{ fontWeight: 700 }}>
-            {noticeDetails.title}
+            {jobDetails.title}
           </Typography>
 
           <Box component="div" sx={{ display: "flex", gap: 1 }}>
             <Chip
-              label={noticeDetails.isActive ? "Active" : "In-Active"}
+              label={jobDetails.status ? "Active" : "In-Active"}
               sx={(theme) => ({
                 ...GlobalNormalChipCss,
-                color: noticeDetails.isActive
+                color: jobDetails.status
                   ? theme.palette.success.main
                   : theme.palette.error.main,
                 backgroundColor: "white",
-                border: noticeDetails.isActive
+                border: jobDetails.status
                   ? `1px solid ${theme.palette.success.main}`
                   : `1px solid ${theme.palette.error.main}`,
                 outline: "none",
@@ -152,7 +150,7 @@ function ViewNoticeModal({
                 textTransform: "uppercase",
               })}
               icon={
-                noticeDetails?.isActive ? (
+                jobDetails?.status ? (
                   <Check fontSize="small" color="success" />
                 ) : (
                   <Close fontSize="small" color="error" />
@@ -175,7 +173,7 @@ function ViewNoticeModal({
               icon={<Visibility fontSize="small" color="success" />}
             />
 
-            {noticeDetails?.isDeleted && (
+            {jobDetails?.isDeleted && (
               <Chip
                 label="Deleted"
                 sx={(theme) => ({
@@ -194,12 +192,19 @@ function ViewNoticeModal({
           </Box>
         </Box>
 
-        <FlexBox sx={{ flexDirection: "column", mb: 1, pl: 0.5 }}>
+        <FlexBox sx={{ my: 1, flexDirection: "column" }}>
           <Typography
             variant="body1"
             sx={{ fontWeight: 700, fontFamily: "Roboto, Arial, sans-serif" }}
           >
-            Notice ID: {noticeDetails?.id}
+            Application ID: {jobDetails?.applicationId}
+          </Typography>
+
+          <Typography
+            variant="body1"
+            sx={{ fontWeight: 700, fontFamily: "Roboto, Arial, sans-serif" }}
+          >
+            Advertisement No: {jobDetails?.advNo}
           </Typography>
         </FlexBox>
 
@@ -213,7 +218,7 @@ function ViewNoticeModal({
             flexWrap: "wrap",
           }}
         >
-          {noticeDetails.tags
+          {jobDetails.tags
             ?.split(",")
             .filter((item) => item.trim())
             .map((item) => (
@@ -228,6 +233,20 @@ function ViewNoticeModal({
               />
             ))}
         </Box>
+
+        <FlexBox sx={{ gap: 1 }}>
+          <Chip
+            label={jobDetails?.applicationStartDate}
+            sx={GlobalChipCss}
+            icon={<CalendarMonth fontSize="small" color="success" />}
+          />
+
+          <Chip
+            label={jobDetails?.applicationEndDate}
+            sx={GlobalChipCss}
+            icon={<CalendarMonth fontSize="small" color="success" />}
+          />
+        </FlexBox>
 
         <FlexBox sx={{ justifyContent: "flex-end", alignItems: "center" }}>
           <Button
@@ -273,15 +292,15 @@ function ViewNoticeModal({
               textAlign: "justify",
             }}
           >
-            <Markdown>{noticeDetails?.noticeDescription}</Markdown>
+            <Markdown>{jobDetails.shortDescription}</Markdown>
           </Box>
         </Box>
 
-        {noticeDetails.noticeDetailedAdv && (
+        {jobDetails.viewPageDescription && (
           <Accordion sx={GlobalAccordianCss} defaultExpanded>
             <AccordionSummary
-              aria-controls={`detailed-notice-content`}
-              id={`detailed-notice-header`}
+              aria-controls={`detailed-jobs-content`}
+              id={`detailed-jobs-header`}
               expandIcon={<ExpandMore fontSize="small" />}
             >
               <Typography
@@ -292,7 +311,7 @@ function ViewNoticeModal({
                   color: theme.palette.primary.A700,
                 }}
               >
-                Detailed Notice
+                Detailed Advertisement
               </Typography>
             </AccordionSummary>
 
@@ -301,7 +320,7 @@ function ViewNoticeModal({
                 component="div"
                 sx={{ mb: 2, fontFamily: "Arial", textAlign: "justify" }}
               >
-                <Markdown>{noticeDetails?.noticeDetailedAdv}</Markdown>
+                <Markdown>{jobDetails?.viewPageDescription}</Markdown>
               </Box>
             </AccordionDetails>
           </Accordion>
@@ -311,10 +330,10 @@ function ViewNoticeModal({
   );
 }
 
-ViewNoticeModal.propTypes = {
+ViewJobModal.propTypes = {
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
-  noticeDetails: PropTypes.object,
+  jobDetails: PropTypes.object,
 };
 
-export default ViewNoticeModal;
+export default ViewJobModal;
