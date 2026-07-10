@@ -31,6 +31,8 @@ import useViewNoticeModal from "../../hooks/dialogs/useViewNoticeModal";
 import CircularProgressLoader from "../../components/CircluarProgressLoader";
 import PropTypes from "prop-types";
 import FlexBox from "../styled/FlexBox";
+import useViews from "../../hooks/core/useViews";
+import AppTooltip from "../core/AppTooltip";
 
 function ViewNoticeModal({
   isOpen = false,
@@ -44,7 +46,13 @@ function ViewNoticeModal({
     GlobalChipCss,
     GlobalAccordianCss,
   } = useAppCss();
-  const { isLoading, viewsDetails, handleGetPageViews } = useViewNoticeModal();
+  const {
+    isLoading,
+    viewsDetails,
+    isRefreshing,
+    handleRefreshPageViews,
+    handleGetPageViews,
+  } = useViews("/notice");
 
   useEffect(() => {
     if (isOpen && noticeDetails) {
@@ -55,7 +63,7 @@ function ViewNoticeModal({
   const refreshView = useCallback(
     async function () {
       if (isOpen && noticeDetails) {
-        await handleGetPageViews(noticeDetails.id);
+        await handleRefreshPageViews(noticeDetails.id);
       }
     },
     [noticeDetails, isOpen],
@@ -230,22 +238,31 @@ function ViewNoticeModal({
         </Box>
 
         <FlexBox sx={{ justifyContent: "flex-end", alignItems: "center" }}>
-          <Button
-            variant="outlined"
-            startIcon={
-              isLoading ? (
-                <CircularProgress size={16} color="secondary" />
-              ) : (
-                <Refresh fontSize="small" />
-              )
-            }
-            disabled={isLoading}
-            onClick={refreshView}
+          <AppTooltip
+            title="Click here to refresh the view count of this notice."
+            placement="left-end"
           >
-            Refresh View
-          </Button>
+            <Chip
+              label="Refresh"
+              sx={(theme) => ({
+                ...GlobalNormalChipCss,
+                border: `1px solid ${theme.palette.primary.main}`,
+                backgroundColor: "transparent",
+                color: theme.palette.primary.main,
+                fontWeight: 700,
+              })}
+              icon={
+                isRefreshing ? (
+                  <CircularProgress size={16} color="secondary" />
+                ) : (
+                  <Refresh fontSize="small" color="primary" />
+                )
+              }
+              clickable
+              onClick={refreshView}
+            />
+          </AppTooltip>
         </FlexBox>
-
         <Divider sx={{ my: 1 }} />
 
         <Box

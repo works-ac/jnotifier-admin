@@ -33,6 +33,7 @@ import CircularProgressLoader from "../../components/CircluarProgressLoader";
 import PropTypes from "prop-types";
 import useViews from "../../hooks/core/useViews";
 import FlexBox from "../styled/FlexBox";
+import AppTooltip from "../core/AppTooltip";
 
 function ViewJobModal({ isOpen = false, onClose = () => {}, jobDetails = {} }) {
   const theme = useTheme();
@@ -42,7 +43,13 @@ function ViewJobModal({ isOpen = false, onClose = () => {}, jobDetails = {} }) {
     GlobalChipCss,
     GlobalAccordianCss,
   } = useAppCss();
-  const { isLoading, viewsDetails, handleGetPageViews } = useViews("/jobs");
+  const {
+    isLoading,
+    isRefreshing,
+    viewsDetails,
+    handleGetPageViews,
+    handleRefreshPageViews,
+  } = useViews("/jobs");
 
   useEffect(() => {
     if (isOpen && jobDetails) {
@@ -53,7 +60,7 @@ function ViewJobModal({ isOpen = false, onClose = () => {}, jobDetails = {} }) {
   const refreshView = useCallback(
     async function () {
       if (isOpen && jobDetails) {
-        await handleGetPageViews(jobDetails.applicationId);
+        await handleRefreshPageViews(jobDetails.applicationId);
       }
     },
     [jobDetails, isOpen],
@@ -249,20 +256,30 @@ function ViewJobModal({ isOpen = false, onClose = () => {}, jobDetails = {} }) {
         </FlexBox>
 
         <FlexBox sx={{ justifyContent: "flex-end", alignItems: "center" }}>
-          <Button
-            variant="outlined"
-            startIcon={
-              isLoading ? (
-                <CircularProgress size={16} color="secondary" />
-              ) : (
-                <Refresh fontSize="small" />
-              )
-            }
-            disabled={isLoading}
-            onClick={refreshView}
+          <AppTooltip
+            title="Click here to refresh the view count of this job listing."
+            placement="left-end"
           >
-            Refresh View
-          </Button>
+            <Chip
+              label="Refresh"
+              sx={(theme) => ({
+                ...GlobalNormalChipCss,
+                border: `1px solid ${theme.palette.primary.main}`,
+                backgroundColor: "transparent",
+                color: theme.palette.primary.main,
+                fontWeight: 700,
+              })}
+              icon={
+                isRefreshing ? (
+                  <CircularProgress size={16} color="secondary" />
+                ) : (
+                  <Refresh fontSize="small" color="primary" />
+                )
+              }
+              clickable
+              onClick={refreshView}
+            />
+          </AppTooltip>
         </FlexBox>
 
         <Divider sx={{ my: 1 }} />

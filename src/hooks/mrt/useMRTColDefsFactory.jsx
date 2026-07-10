@@ -20,12 +20,14 @@ import Markdown from "react-markdown";
 import { manageJobState } from "../../services/JobService";
 import { toast } from "react-toastify";
 import { getToastNotification } from "../../helpers";
+import useViews from "../core/useViews";
 
 export default function useMRTColDefsFactory() {
   const { GlobalChipCss } = useAppCss();
   const [isProcessing, setIsProcessing] = useState(false);
   const [showViewDialog, setShowViewDialog] = useState(false);
   const [jobDetails, setJobDetails] = useState(null);
+  const { isLoading } = useViews("/jobs");
 
   // ── Confirmation dialog state ────────────────────────────────────────────
   // Holds the job that is pending a status toggle; null means dialog is closed.
@@ -220,8 +222,13 @@ export default function useMRTColDefsFactory() {
                 <IconButton
                   color="primary"
                   onClick={() => handleViewBtn(row?.original)}
+                  disabled={isLoading}
                 >
-                  <Visibility fontSize="small" />
+                  {isLoading ? (
+                    <CircularProgress size={16} color="secondary" />
+                  ) : (
+                    <Visibility fontSize="small" />
+                  )}
                 </IconButton>
               </Tooltip>
 

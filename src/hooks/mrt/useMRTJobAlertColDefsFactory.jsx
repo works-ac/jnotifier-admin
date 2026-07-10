@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import useAppCss from "../useAppCss";
 import Markdown from "react-markdown";
-import { Box, Chip, IconButton, Paper } from "@mui/material";
+import { Box, Chip, CircularProgress, IconButton, Paper } from "@mui/material";
 import dayjs from "dayjs";
 import {
   Delete,
@@ -19,6 +19,7 @@ import {
   markNoticeAsActive,
   markNoticeAsArchived,
 } from "../../services/NoticeService";
+import useViews from "../core/useViews";
 
 function useMRTJobAlertColDefsFactory() {
   const { GlobalChipCss } = useAppCss();
@@ -33,6 +34,7 @@ function useMRTJobAlertColDefsFactory() {
     activate: false,
     delete: false,
   });
+  const { isLoading: isViewNoticeModalLoading } = useViews("/notice");
 
   const handleViewBtn = useCallback(function (rowDetails) {
     setRow(rowDetails);
@@ -336,8 +338,13 @@ function useMRTJobAlertColDefsFactory() {
                 <IconButton
                   color="primary"
                   onClick={() => handleViewBtn(rowData)}
+                  disabled={isViewNoticeModalLoading}
                 >
-                  <Visibility fontSize="small" />
+                  {isViewNoticeModalLoading ? (
+                    <CircularProgress size={16} color="secondary" />
+                  ) : (
+                    <Visibility fontSize="small" />
+                  )}
                 </IconButton>
               </AppTooltip>
             </Paper>
