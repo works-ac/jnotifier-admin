@@ -33,6 +33,7 @@ import PropTypes from "prop-types";
 import FlexBox from "../styled/FlexBox";
 import useViews from "../../hooks/core/useViews";
 import AppTooltip from "../core/AppTooltip";
+import remarkGfm from "remark-gfm";
 
 function ViewNoticeModal({
   isOpen = false,
@@ -290,7 +291,9 @@ function ViewNoticeModal({
               textAlign: "justify",
             }}
           >
-            <Markdown>{noticeDetails?.noticeDescription}</Markdown>
+            <Markdown remarkPlugins={[remarkGfm]}>
+              {noticeDetails?.noticeDescription}
+            </Markdown>
           </Box>
         </Box>
 
@@ -318,7 +321,9 @@ function ViewNoticeModal({
                 component="div"
                 sx={{ mb: 2, fontFamily: "Arial", textAlign: "justify" }}
               >
-                <Markdown>{noticeDetails?.noticeDetailedAdv}</Markdown>
+                <Markdown remarkPlugins={[remarkGfm]}>
+                  {noticeDetails?.noticeDetailedAdv}
+                </Markdown>
               </Box>
             </AccordionDetails>
           </Accordion>

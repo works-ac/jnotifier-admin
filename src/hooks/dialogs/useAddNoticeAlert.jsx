@@ -60,6 +60,7 @@ function useAddNoticeAlert() {
         successCallback();
         closeCallback();
       } catch (error) {
+        console.error("Error adding notice:", error);
         showErrorMsg(error);
       } finally {
         setIsSubmitting(false);

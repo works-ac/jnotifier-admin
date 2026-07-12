@@ -34,6 +34,7 @@ import PropTypes from "prop-types";
 import useViews from "../../hooks/core/useViews";
 import FlexBox from "../styled/FlexBox";
 import AppTooltip from "../core/AppTooltip";
+import remarkGfm from "remark-gfm";
 
 function ViewJobModal({ isOpen = false, onClose = () => {}, jobDetails = {} }) {
   const theme = useTheme();
@@ -309,7 +310,9 @@ function ViewJobModal({ isOpen = false, onClose = () => {}, jobDetails = {} }) {
               textAlign: "justify",
             }}
           >
-            <Markdown>{jobDetails.shortDescription}</Markdown>
+            <Markdown rehypePlugins={[remarkGfm]}>
+              {jobDetails.shortDescription}
+            </Markdown>
           </Box>
         </Box>
 
@@ -337,7 +340,9 @@ function ViewJobModal({ isOpen = false, onClose = () => {}, jobDetails = {} }) {
                 component="div"
                 sx={{ mb: 2, fontFamily: "Arial", textAlign: "justify" }}
               >
-                <Markdown>{jobDetails?.viewPageDescription}</Markdown>
+                <Markdown remarkPlugins={[remarkGfm]}>
+                  {jobDetails?.viewPageDescription}
+                </Markdown>
               </Box>
             </AccordionDetails>
           </Accordion>

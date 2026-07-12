@@ -33,7 +33,7 @@ function TagsInput({
 
   const handleAdd = () => {
     if (!input.trim()) return;
-    onAddTag(input.trim());
+    onAddTag(input.trim().toUpperCase());
     setInput("");
   };
 
