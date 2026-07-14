@@ -209,7 +209,14 @@ function FileUpload({
         )}
 
         {!isSimulating && selectedFile && (
-          <Box mt={1} display="flex" flexDirection="column" alignItems="center">
+          <Box
+            mt={1}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
             <Typography
               variant="caption"
               color="text.secondary"
@@ -217,6 +224,7 @@ function FileUpload({
             >
               Selected file: {selectedFile.name}
             </Typography>
+
             <Typography
               variant="caption"
               fontWeight={500}
@@ -224,6 +232,7 @@ function FileUpload({
             >
               File Size: {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
             </Typography>
+
             {isOversized && (
               <Typography variant="caption" color="error" fontWeight={700}>
                 File exceeds maximum allowed size ({maxSizeMB} MB)

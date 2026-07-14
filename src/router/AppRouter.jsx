@@ -12,6 +12,7 @@ import AccountRegisterationPage from "../pages/AccountRegisterationPage";
 import RecoverAccountPage from "../pages/RecoverAccountPage";
 import ListedJobs from "../pages/ListedJobs";
 import NoticeListingPage from "../pages/NoticeListingPage";
+import MediaPage from "../pages/MediaPage";
 
 /**
  * Route structure:
@@ -67,6 +68,14 @@ const AppRoutes = createBrowserRouter([
       {
         path: "recover/account",
         element: <RecoverAccountPage />,
+      },
+      {
+        path: "medias",
+        element: (
+          <CheckAuthStatus>
+            <MediaPage />
+          </CheckAuthStatus>
+        ),
       },
       {
         path: "*",

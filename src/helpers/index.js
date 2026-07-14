@@ -20,3 +20,9 @@ export function getErrorMsg(error) {
 
   return message;
 }
+
+export function convertIntoMB(sizeInBytes) {
+  if (!sizeInBytes) return 0;
+
+  return (sizeInBytes / (1024 * 1024)).toFixed(2);
+}
