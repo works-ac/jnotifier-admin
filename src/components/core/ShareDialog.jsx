@@ -3,6 +3,7 @@ import {
   Close,
   ContentCopy,
   Link,
+  WhatsApp,
 } from "@mui/icons-material";
 import {
   Box,
@@ -20,6 +21,9 @@ import {
 } from "@mui/material";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
+import { shareOnWhatsApp, whatsAppFormatter } from "../../helpers";
+import FlexBox from "../styled/FlexBox";
+import AppTooltip from "./AppTooltip";
 
 /**
  * Reusable ShareDialog component.
@@ -37,16 +41,23 @@ function ShareDialog({
   title = "Share this link",
   recruitmentTitle,
   recruitmentDesc,
+  contentHeading = "New Job Update",
 }) {
   const theme = useTheme();
   const shareUrl = url || globalThis.location.href;
-  const content = `${recruitmentTitle}
+  const whatsAppDescription = whatsAppFormatter(recruitmentDesc);
 
-  ${recruitmentDesc}
+  const content = `📢📢📢📢 ${contentHeading} 📢📢📢📢
+  
+  👉👉 *Job Title:* ${recruitmentTitle}
 
-  CLICK THE LINK GIVEN BELOW TO APPLY 👇👇👇👇
+  👉👉 *Job Description*
 
-  ${shareUrl}`;
+  ${whatsAppDescription}
+
+  *CLICK THE LINK GIVEN BELOW TO APPLY 👇👇👇👇*
+
+  🔗🔗 *${shareUrl}*`;
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -75,6 +86,28 @@ function ShareDialog({
         },
       }}
     >
+      <FlexBox sx={{ justifyContent: "flex-end", p: 1 }}>
+        <Tooltip title="Close">
+          <IconButton
+            id="share-dialog-close-btn"
+            size="small"
+            onClick={onClose}
+            aria-label="close share dialog"
+            sx={{
+              color: theme.palette.secondary.main,
+              "&:hover": {
+                color: "whitesmoke",
+                backgroundColor: theme.palette.error.main,
+                borderRadius: 2,
+              },
+              transition: "color 0.25s ease",
+            }}
+          >
+            <Close fontSize="small" />
+          </IconButton>
+        </Tooltip>
+      </FlexBox>
+
       {/* ── Header ── */}
       <DialogTitle
         id="share-dialog-title"
@@ -100,22 +133,6 @@ function ShareDialog({
             {title}
           </Typography>
         </Box>
-
-        <Tooltip title="Close">
-          <IconButton
-            id="share-dialog-close-btn"
-            size="small"
-            onClick={onClose}
-            aria-label="close share dialog"
-            sx={{
-              color: theme.palette.secondary.main,
-              "&:hover": { color: theme.palette.error.main },
-              transition: "color 0.25s ease",
-            }}
-          >
-            <Close fontSize="small" />
-          </IconButton>
-        </Tooltip>
       </DialogTitle>
 
       {/* ── Content ── */}
@@ -125,6 +142,7 @@ function ShareDialog({
           sx={{
             display: "block",
             mb: 0.75,
+            ml: 0.75,
             color: theme.palette.secondary.main,
             fontFamily: "Inter, sans-serif",
             letterSpacing: "0.03em",
@@ -132,7 +150,7 @@ function ShareDialog({
             fontWeight: 600,
           }}
         >
-          Sharable Content
+          Text
         </Typography>
 
         <TextField
@@ -144,43 +162,46 @@ function ShareDialog({
             textAlign: "justify",
           }}
           multiline
+          helperText="Please verify the text once before sharing it to others."
         />
 
-        {/* ── Copied caption ── */}
-        <Typography
-          id="share-dialog-copied-caption"
-          variant="caption"
-          sx={{
-            display: "block",
-            mt: 0.75,
-            minHeight: "1.2em",
-            color: copied ? theme.palette.success.main : "transparent",
-            fontFamily: "Inter, sans-serif",
-            fontWeight: 500,
-            transition: "color 0.3s ease",
-            userSelect: "none",
-          }}
-        >
-          Url copied on the clipboard
-        </Typography>
-      </DialogContent>
+        {copied && (
+          <Typography
+            id="share-dialog-copied-caption"
+            variant="caption"
+            sx={{
+              display: "block",
+              mt: 0.75,
+              minHeight: "1.2em",
+              color: theme.palette.success.main,
+              fontFamily: "Inter, sans-serif",
+              fontWeight: 500,
+              transition: "color 0.3s ease",
+              userSelect: "none",
+            }}
+          >
+            Url copied on the clipboard
+          </Typography>
+        )}
 
-      <DialogActions>
-        <Button
-          variant="contained"
-          startIcon={
-            copied ? (
-              <CheckCircleOutlineOutlined fontSize="small" />
-            ) : (
-              <ContentCopy fontSize="small" />
-            )
-          }
-          onClick={handleCopy}
-          color={copied ? "success" : "primary"}
-        >
-          {copied ? "Copied" : "Copy"}
-        </Button>
-      </DialogActions>
+        <FlexBox sx={{ justifyContent: "flex-end", alignItems: "center" }}>
+          <AppTooltip title="Share on WhatsApp" placement="left-end">
+            <IconButton onClick={() => shareOnWhatsApp(content)}>
+              <WhatsApp fontSize="small" color="success" />
+            </IconButton>
+          </AppTooltip>
+
+          <AppTooltip title="Copy" placement="right-end">
+            <IconButton onClick={handleCopy}>
+              {copied ? (
+                <CheckCircleOutlineOutlined fontSize="small" color="success" />
+              ) : (
+                <ContentCopy fontSize="small" color="primary" />
+              )}
+            </IconButton>
+          </AppTooltip>
+        </FlexBox>
+      </DialogContent>
     </Dialog>
   );
 }
@@ -192,6 +213,7 @@ ShareDialog.propTypes = {
   title: PropTypes.string,
   recruitmentTitle: PropTypes.string,
   recruitmentDesc: PropTypes.string,
+  contentHeading: PropTypes.string,
 };
 
 export default React.memo(ShareDialog);

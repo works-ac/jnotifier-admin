@@ -81,8 +81,6 @@ function useRegisteration() {
         const response = await register(payload);
         const reply = response.data?.data;
 
-        console.log(reply, "reply");
-
         await reloadCaptcha();
         setDob(dayjs());
         setUserRegPayload(UserRegisteration);

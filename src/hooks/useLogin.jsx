@@ -3,6 +3,8 @@ import { UserLogin } from "../data/UserLogin";
 import { login } from "../services/SignupService";
 import useAppAlert from "./useAppAlert";
 import useCaptcha from "./useCaptcha";
+import { useDispatch } from "react-redux";
+import { setLoginRes } from "../redux/slices/AuthSlice";
 
 function useLogin() {
   const [isPwdVisible, setIsPwdVisible] = useState(false);
@@ -12,6 +14,7 @@ function useLogin() {
   const [showOTPPanel, setShowOTPPanel] = useState(false);
   const { reset, showErrorMsg, alert, handleAlertOnClose } = useAppAlert();
   const { reloadCaptcha } = useCaptcha();
+  const dispatch = useDispatch();
 
   const togglePwdVisibility = useCallback(
     function () {
@@ -36,8 +39,11 @@ function useLogin() {
       setIsLogging(true);
 
       try {
-        await login(payload);
+        const response = await login(payload);
+        const reply = response.data?.data ?? {};
+
         setShowOTPPanel(true);
+        dispatch(setLoginRes(reply));
       } catch (error) {
         showErrorMsg(error);
         reloadCaptcha();

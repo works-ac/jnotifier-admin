@@ -6,10 +6,18 @@ import useOTPVerification from "../hooks/useOTPVerification";
 import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import AppAlert from "./AppAlert";
+import { maskEmail } from "../helpers";
+import FlexBox from "./styled/FlexBox";
+import Heading from "./Heading";
+import { Shield } from "@mui/icons-material";
 
-function OTPVerification({ verifyType = "email_verification", username = "", onSuccess }) {
+function OTPVerification({
+  verifyType = "email_verification",
+  username = "",
+  onSuccess,
+}) {
   const theme = useTheme();
-  const { signupReply } = useSelector((state) => state.auth);
+  const { signupReply, loginRes } = useSelector((state) => state.auth);
   const {
     handleResendOTP,
     handleVerifyOTP,
@@ -30,17 +38,36 @@ function OTPVerification({ verifyType = "email_verification", username = "", onS
 
   return (
     <>
-      <Typography variant="h4" sx={{ mt: 1, fontWeight: 700 }} color="primary">
-        OTP Verification
-      </Typography>
+      <Heading
+        Icon={Shield}
+        color={theme.palette.primary.main}
+        text="OTP Verification"
+        iconColor={theme.palette.warning.main}
+        mb={1}
+      />
 
-      <Typography
-        variant="caption"
-        sx={{ fontWeight: 700, pl: 1 }}
-        color="secondary"
-      >
-        Please enter the OTP we just sent to your email.
-      </Typography>
+      <Divider sx={{ mb: 1 }} />
+
+      <FlexBox sx={{ flexDirection: "column" }}>
+        <Typography
+          variant="caption"
+          sx={{ fontWeight: 700, pl: 1 }}
+          color="secondary"
+        >
+          Please enter the OTP we just sent to an email registered with us.
+        </Typography>
+
+        <Typography
+          variant="caption"
+          sx={{ fontWeight: 700, pl: 1 }}
+          color="secondary"
+        >
+          Registered Email:
+          <Box component="span" sx={{ ml: 0.5 }}>
+            {maskEmail(loginRes?.email)}
+          </Box>
+        </Typography>
+      </FlexBox>
 
       <AppAlert
         alert={alert}

@@ -1,6 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = { user: null, userAuthStatus: null, userRole: null, signupReply: null };
+const initialState = {
+  user: null,
+  userAuthStatus: null,
+  userRole: null,
+  signupReply: null,
+  loginRes: null,
+};
 
 export const authSlice = createSlice({
   name: "auth",
@@ -36,6 +42,12 @@ export const authSlice = createSlice({
     clearSignupReply: (state) => {
       state.signupReply = null;
     },
+    setLoginRes: (state, action) => {
+      state.loginRes = action.payload;
+    },
+    clearLoginRes: (state) => {
+      state.loginRes = null;
+    },
   },
 });
 
@@ -49,5 +61,7 @@ export const {
   clearUserRole,
   clearSignupReply,
   setSignupReply,
+  clearLoginRes,
+  setLoginRes,
 } = authSlice.actions;
 export default authSlice.reducer;

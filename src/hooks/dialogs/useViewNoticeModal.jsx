@@ -2,27 +2,28 @@ import React, { useCallback, useState } from "react";
 import { getPageViews } from "../../services/ViewsService";
 
 function useViewNoticeModal() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [viewsDetails, setViewsDetails] = useState(null);
-  const visitedPage =
-    import.meta.env.VITE_PRODUCTION_ADMIN_PANEL_URL + "/notice";
+  const [isCopied, setIsCopied] = useState(false);
+  const [showShareDialog, setShowShareDialog] = useState(false);
 
-  const handleGetPageViews = useCallback(async function (noticeId) {
-    setIsLoading(true);
-
-    try {
-      const response = await getPageViews(`${visitedPage}/${noticeId}`);
-      const data = response.data?.data ?? {};
-
-      setViewsDetails(data);
-    } catch {
-      setviewsDetails(null);
-    } finally {
-      setIsLoading(false);
-    }
+  const handleShareDialogOnClose = useCallback(function () {
+    setShowShareDialog((prev) => !prev);
   }, []);
 
-  return { viewsDetails, isLoading, handleGetPageViews };
+  const handleCopyLinkBtn = useCallback(async function (url) {
+    setIsCopied(true);
+    await navigator.clipboard.writeText(url);
+
+    setTimeout(() => {
+      setIsCopied(false);
+    }, 1000);
+  }, []);
+
+  return {
+    isCopied,
+    showShareDialog,
+    handleCopyLinkBtn,
+    handleShareDialogOnClose,
+  };
 }
 
 export default useViewNoticeModal;

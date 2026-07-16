@@ -41,6 +41,7 @@ const AppTheme = createTheme({
     },
     secondary: {
       main: "#737373",
+      A50: "#f8fafc",
       A100: "#cbd5e1",
       A200: "#e2e8f0",
       A50: "#f1f5f9",
