@@ -13,6 +13,7 @@ import RecoverAccountPage from "../pages/RecoverAccountPage";
 import ListedJobs from "../pages/ListedJobs";
 import NoticeListingPage from "../pages/NoticeListingPage";
 import MediaPage from "../pages/MediaPage";
+import CalendarPage from "../pages/CalendarPage";
 
 /**
  * Route structure:
@@ -74,6 +75,14 @@ const AppRoutes = createBrowserRouter([
         element: (
           <CheckAuthStatus>
             <MediaPage />
+          </CheckAuthStatus>
+        ),
+      },
+      {
+        path: "calendar",
+        element: (
+          <CheckAuthStatus>
+            <CalendarPage />
           </CheckAuthStatus>
         ),
       },

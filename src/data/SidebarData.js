@@ -5,6 +5,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import AddAlertIcon from "@mui/icons-material/AddAlert";
 import MovieIcon from "@mui/icons-material/Movie";
 import MmsIcon from "@mui/icons-material/Mms";
+import { CalendarMonth } from "@mui/icons-material";
 
 /**
  * Sidebar navigation data with role-based visibility.
@@ -54,7 +55,6 @@ export const SidebarNavData = [
       },
     ],
   },
-
   {
     id: "media",
     label: "Media",
@@ -69,7 +69,13 @@ export const SidebarNavData = [
       },
     ],
   },
-
+  {
+    id: "calendar",
+    label: "My Calendar",
+    icon: CalendarMonth,
+    href: "/calendar",
+    roles: ["ROLE_ADMIN"],
+  },
   {
     id: "account",
     label: "My Account",
