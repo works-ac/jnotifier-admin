@@ -14,3 +14,16 @@ export async function getAllMedia(payload) {
 export async function uploadNewMedia(payload) {
   return await ApplicationApi.post(MEDIA_SERVICE_BASE_URL + "add", payload);
 }
+
+export async function changeMediaVisibility(payload) {
+  return await ApplicationApi.put(
+    MEDIA_SERVICE_BASE_URL + "change/visibility",
+    payload,
+  );
+}
+
+export async function deleteMedia(mediaId) {
+  return await ApplicationApi.delete(
+    MEDIA_SERVICE_BASE_URL + "delete/" + mediaId,
+  );
+}

@@ -21,6 +21,7 @@ function useAppCss() {
     borderRadius: "16px",
     width: "100%",
     border: `1px solid ${theme.palette.secondary["A50"]}`,
+    minHeight: "650px",
   }));
 
   const GlobalDialogDividerCss = useMemo(

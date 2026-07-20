@@ -4,7 +4,6 @@ import WorkIcon from "@mui/icons-material/Work";
 import SearchIcon from "@mui/icons-material/Search";
 import AddAlertIcon from "@mui/icons-material/AddAlert";
 import MovieIcon from "@mui/icons-material/Movie";
-import MmsIcon from "@mui/icons-material/Mms";
 
 /**
  * Sidebar navigation data with role-based visibility.
@@ -59,15 +58,8 @@ export const SidebarNavData = [
     id: "media",
     label: "Media",
     icon: MovieIcon,
-    roles: ["ROLE_ADMIN"], // all roles
-    children: [
-      {
-        id: "listed-media",
-        label: "Media Listings",
-        icon: MmsIcon,
-        href: "/medias",
-      },
-    ],
+    roles: ["ROLE_ADMIN"],
+    href: "/medias",
   },
 
   {

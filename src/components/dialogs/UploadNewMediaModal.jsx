@@ -9,6 +9,7 @@ import {
   Divider,
   IconButton,
   Typography,
+  useTheme,
 } from "@mui/material";
 import React from "react";
 import useAppCss from "../../hooks/useAppCss";
@@ -16,8 +17,10 @@ import { Close, UploadFile } from "@mui/icons-material";
 import useUploadNewMediaModal from "../../hooks/dialogs/useUploadNewMediaModal";
 import FileUpload from "../core/FileUpload";
 import AppAlert from "../AppAlert";
+import Notes from "../Notes";
 
 function UploadNewMediaModal({ onClose, isOpen = false, onSuccess }) {
+  const theme = useTheme();
   const { GlobalDialogTitle } = useAppCss();
   const {
     setFile,
@@ -84,6 +87,13 @@ function UploadNewMediaModal({ onClose, isOpen = false, onSuccess }) {
           type={alert?.type}
         />
 
+        <Box component="div" sx={{ my: 1, pl: 1 }}>
+          <Typography variant="body1" sx={{ fontWeight: 700 }}>
+            Please upload your media below by clicking on the Upload button or
+            directly dropping the file in the highlighted area.
+          </Typography>
+        </Box>
+
         <FileUpload
           accept=".pdf,.png,.jpeg,.jpg"
           maxSizeMB={10}
@@ -98,6 +108,13 @@ function UploadNewMediaModal({ onClose, isOpen = false, onSuccess }) {
           validateErrorMessage="Only .pdf/.png/.jpeg/.jpg files are accepted."
           disabled={isLoading}
         />
+
+        <Box component="div" sx={{ mt: 1 }}>
+          <Notes
+            note="Only PDF and image files are supported."
+            noteColor={theme.palette.secondary.main}
+          />
+        </Box>
       </DialogContent>
 
       <DialogActions>

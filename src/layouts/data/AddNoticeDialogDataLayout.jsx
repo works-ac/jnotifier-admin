@@ -13,9 +13,13 @@ const AddNoticeDialogDataLayout = [
       input: {
         startAdornment: (
           <InputAdornment position="start">
-            <Title fontSize="small" />
+            <Title fontSize="small" color="primary" />
           </InputAdornment>
         ),
+        sx: {
+          fontWeight: 700,
+          color: "primary.main",
+        },
       },
     },
     placeholder: "For ex - RRB Recruitment Short Notice",
