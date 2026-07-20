@@ -4,6 +4,7 @@ import WorkIcon from "@mui/icons-material/Work";
 import SearchIcon from "@mui/icons-material/Search";
 import AddAlertIcon from "@mui/icons-material/AddAlert";
 import MovieIcon from "@mui/icons-material/Movie";
+import { Dashboard } from "@mui/icons-material";
 
 /**
  * Sidebar navigation data with role-based visibility.
@@ -32,7 +33,6 @@ export const SidebarNavData = [
     href: "/",
     roles: null, // all roles
   },
-
   {
     id: "jobs",
     label: "Jobs",
@@ -53,7 +53,6 @@ export const SidebarNavData = [
       },
     ],
   },
-
   {
     id: "media",
     label: "Media",
@@ -61,7 +60,13 @@ export const SidebarNavData = [
     roles: ["ROLE_ADMIN"],
     href: "/medias",
   },
-
+  {
+    id: "dashboard",
+    label: "Dashboard",
+    icon: Dashboard,
+    roles: ["ROLE_SUPERADMIN"],
+    href: "/dashboard",
+  },
   {
     id: "account",
     label: "My Account",

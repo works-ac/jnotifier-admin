@@ -7,25 +7,8 @@ import CircluarProgressLoader from "./CircluarProgressLoader";
 import AppAlert from "./AppAlert";
 import { AppConstants } from "../app/AppConstants";
 
-/**
- * Public paths that are accessible WITHOUT authentication.
- * CheckAuthStatus will NOT redirect when the user is already on one of these.
- */
 const PUBLIC_PATHS = ["/account", "/recover/account", "/register"];
 
-/**
- * CheckAuthStatus — auth guard wrapper component.
- *
- * Usage:
- *   Wrap any route element that requires authentication:
- *   <CheckAuthStatus><ProtectedPage /></CheckAuthStatus>
- *
- * Behaviour:
- *   1. Calls getMe() on mount via useAuthStatus hook.
- *   2. Shows a full-page loading spinner while checking.
- *   3. If unauthenticated AND current path is NOT a public path → redirects to /account.
- *   4. Renders children once authenticated (or on a public path).
- */
 function CheckAuthStatus({ children }) {
   const { alert, checkUserAuthStatus, handleAlertOnClose, isLoading } =
     useAuthStatus();
@@ -37,7 +20,6 @@ function CheckAuthStatus({ children }) {
     checkUserAuthStatus();
   }, []);
 
-  // After the check resolves, redirect if not authenticated and not on a public route
   useEffect(() => {
     if (isLoading) return;
 

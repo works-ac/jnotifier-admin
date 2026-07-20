@@ -13,6 +13,8 @@ import RecoverAccountPage from "../pages/RecoverAccountPage";
 import ListedJobs from "../pages/ListedJobs";
 import NoticeListingPage from "../pages/NoticeListingPage";
 import MediaPage from "../pages/MediaPage";
+import DashboardPage from "../pages/DashboardPage";
+import CheckPermissionStatus from "../components/core/CheckPermissionStatus";
 
 /**
  * Route structure:
@@ -41,7 +43,11 @@ const AppRoutes = createBrowserRouter([
         index: true,
         element: (
           <CheckAuthStatus>
-            <HomePage />
+            <CheckPermissionStatus
+              allowedRoles={["ROLE_ADMIN", "ROLE_SUPERADMIN"]}
+            >
+              <HomePage />
+            </CheckPermissionStatus>
           </CheckAuthStatus>
         ),
       },
@@ -49,7 +55,9 @@ const AppRoutes = createBrowserRouter([
         path: "jobs/listed",
         element: (
           <CheckAuthStatus>
-            <ListedJobs />
+            <CheckPermissionStatus allowedRoles={["ROLE_ADMIN"]}>
+              <ListedJobs />
+            </CheckPermissionStatus>
           </CheckAuthStatus>
         ),
       },
@@ -57,7 +65,9 @@ const AppRoutes = createBrowserRouter([
         path: "jobs/notices",
         element: (
           <CheckAuthStatus>
-            <NoticeListingPage />
+            <CheckPermissionStatus allowedRoles={["ROLE_ADMIN"]}>
+              <NoticeListingPage />
+            </CheckPermissionStatus>
           </CheckAuthStatus>
         ),
       },
@@ -73,7 +83,19 @@ const AppRoutes = createBrowserRouter([
         path: "medias",
         element: (
           <CheckAuthStatus>
-            <MediaPage />
+            <CheckPermissionStatus allowedRoles={["ROLE_ADMIN"]}>
+              <MediaPage />
+            </CheckPermissionStatus>
+          </CheckAuthStatus>
+        ),
+      },
+      {
+        path: "dashboard",
+        element: (
+          <CheckAuthStatus>
+            <CheckPermissionStatus allowedRoles={["ROLE_SUPERADMIN"]}>
+              <DashboardPage />
+            </CheckPermissionStatus>
           </CheckAuthStatus>
         ),
       },
