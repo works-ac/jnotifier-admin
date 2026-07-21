@@ -15,6 +15,7 @@ import NoticeListingPage from "../pages/NoticeListingPage";
 import MediaPage from "../pages/MediaPage";
 import DashboardPage from "../pages/DashboardPage";
 import CheckPermissionStatus from "../components/core/CheckPermissionStatus";
+import JobCategoryMasterPage from "../pages/JobCategoryMasterPage";
 
 /**
  * Route structure:
@@ -95,6 +96,16 @@ const AppRoutes = createBrowserRouter([
           <CheckAuthStatus>
             <CheckPermissionStatus allowedRoles={["ROLE_SUPERADMIN"]}>
               <DashboardPage />
+            </CheckPermissionStatus>
+          </CheckAuthStatus>
+        ),
+      },
+      {
+        path: "masters/job-categories",
+        element: (
+          <CheckAuthStatus>
+            <CheckPermissionStatus allowedRoles={["ROLE_SUPERADMIN"]}>
+              <JobCategoryMasterPage />
             </CheckPermissionStatus>
           </CheckAuthStatus>
         ),

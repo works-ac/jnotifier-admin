@@ -19,11 +19,7 @@ function NavItem({ item, sidebarExpanded }) {
   const Icon = item.icon;
 
   return (
-    <Tooltip
-      title={!sidebarExpanded ? item.label : ""}
-      placement="right"
-      arrow
-    >
+    <Tooltip title={!sidebarExpanded ? item.label : ""} placement="right" arrow>
       <ListItem disablePadding sx={{ display: "block" }}>
         <ListItemButton
           component={RouterLink}
