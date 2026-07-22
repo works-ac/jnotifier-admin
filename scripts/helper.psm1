@@ -11,5 +11,15 @@ function Convert-SecureStringToPlainText {
         [System.Runtime.InteropServices.Marshal]::ZeroFreeGlobalAllocUnicode($ptr)
     }
 }
+
+function CheckCmdStatus {
+    param (
+        [string]$Msg
+    )
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error $Msg
+        exit $LASTEXITCODE
+    }
+}
   
-Export-ModuleMember -Function Convert-SecureStringToPlainText
+Export-ModuleMember -Function Convert-SecureStringToPlainText, CheckCmdStatus
