@@ -28,6 +28,8 @@ import useAddJob from "../../hooks/useAddJob";
 import AppAlert from "../AppAlert";
 import FileUpload from "../core/FileUpload";
 import TagsInput from "../core/TagsInput";
+import useAppCss from "../../hooks/useAppCss";
+import Notes from "../Notes";
 
 /**
  * AddJobModal — Dialog form to create a new job listing.
@@ -55,6 +57,7 @@ function AddJobModal({ open, onClose, onSuccess }) {
     handleSubmit,
     resetForm,
   } = useAddJob(onSuccess);
+  const { RequiredFieldCss } = useAppCss();
 
   const handleClose = () => {
     if (isSubmitting) return;
@@ -121,6 +124,7 @@ function AddJobModal({ open, onClose, onSuccess }) {
                 style: { fontWeight: 700, color: theme.palette.primary.main },
               },
             }}
+            sx={RequiredFieldCss}
           />
 
           {/* ── Row 2: Start Date | End Date | Adv No (3 cols) ── */}
@@ -137,6 +141,7 @@ function AddJobModal({ open, onClose, onSuccess }) {
                 slotProps={{
                   textField: { fullWidth: true, required: true, size: "small" },
                 }}
+                sx={RequiredFieldCss}
               />
             </Box>
 
@@ -151,6 +156,7 @@ function AddJobModal({ open, onClose, onSuccess }) {
                 slotProps={{
                   textField: { fullWidth: true, required: true, size: "small" },
                 }}
+                sx={RequiredFieldCss}
               />
             </Box>
 
@@ -161,7 +167,6 @@ function AddJobModal({ open, onClose, onSuccess }) {
                 value={form.advNo}
                 onChange={handleChange}
                 fullWidth
-                required
                 disabled={isSubmitting}
                 placeholder="e.g. ADV/2024/001"
                 slotProps={{
@@ -206,6 +211,7 @@ function AddJobModal({ open, onClose, onSuccess }) {
                     ),
                   },
                 }}
+                sx={RequiredFieldCss}
               />
             </Box>
 
@@ -233,6 +239,7 @@ function AddJobModal({ open, onClose, onSuccess }) {
                     ),
                   },
                 }}
+                sx={RequiredFieldCss}
               />
             </Box>
           </Box>
@@ -338,6 +345,18 @@ function AddJobModal({ open, onClose, onSuccess }) {
               />
             </Box>
           </Box>
+        </Box>
+
+        <Box component="div" sx={{ my: 1 }}>
+          <Notes
+            note="All fields marked with asterisk (*) are mandatory to fill."
+            noteColor={theme.palette.secondary.main}
+          />
+
+          <Notes
+            note="Only markdown and pdf files are supported."
+            noteColor={theme.palette.secondary.main}
+          />
         </Box>
       </DialogContent>
 

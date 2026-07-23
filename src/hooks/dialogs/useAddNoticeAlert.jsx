@@ -4,6 +4,7 @@ import { AddNoticeAlertData } from "../../data/AddNoticeListing";
 import useAppAlert from "../useAppAlert";
 import { addNotice } from "../../services/NoticeService";
 import { AddJobAlertSchema } from "../../data/schema/AddJobAlertSchema";
+import { showZodValidationError } from "../../helpers";
 
 function useAddNoticeAlert() {
   const [form, setForm] = useState(AddNoticeAlertData);
@@ -43,7 +44,10 @@ function useAddNoticeAlert() {
       };
 
       const result = AddJobAlertSchema.safeParse(payload);
-      if (!result.success) throw new Error(result.error.message);
+      if (!result.success)
+        throw new Error(
+          showZodValidationError(result.error.flatten().fieldErrors),
+        );
 
       try {
         const formData = new FormData();

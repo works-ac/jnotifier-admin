@@ -382,7 +382,7 @@ function ViewJobModal({ isOpen = false, onClose = () => {}, jobDetails = {} }) {
           <Button
             variant="outlined"
             color="success"
-            disabled={isDownloading}
+            disabled={isDownloading || !jobDetails?.advUri}
             startIcon={
               isDownloading ? (
                 <CircularProgress size={16} color="secondary" />

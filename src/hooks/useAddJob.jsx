@@ -2,12 +2,14 @@ import { useCallback, useState } from "react";
 import useAppAlert from "./useAppAlert";
 import { createJob } from "../services/JobService";
 import dayjs from "dayjs";
+import { AddNewJobPostingSchema } from "../data/schema/AddNewJobPostingSchema";
+import { showZodValidationError } from "../helpers";
 
 const INITIAL_FORM = {
   title: "",
-  applicationStartDate: null,  // dayjs object while editing
-  applicationEndDate: null,    // dayjs object while editing
-  tags: [],                    // array of tag strings, joined on submit
+  applicationStartDate: null, // dayjs object while editing
+  applicationEndDate: null, // dayjs object while editing
+  tags: [], // array of tag strings, joined on submit
   shortDescription: "",
   advNo: "",
   applyLink: "",
@@ -24,7 +26,7 @@ const INITIAL_FORM = {
  */
 function useAddJob(onSuccess) {
   const [form, setForm] = useState(INITIAL_FORM);
-  const [file, setFile] = useState(null);       // markdown file
+  const [file, setFile] = useState(null); // markdown file
   const [advFile, setAdvFile] = useState(null); // PDF file
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { alert, handleAlertOnClose, reset, showErrorMsg } = useAppAlert();
@@ -63,25 +65,33 @@ function useAddJob(onSuccess) {
     setIsSubmitting(true);
 
     try {
-      const formData = new FormData();
+      const payload = {
+        title: form.title,
+        applicationStartDate: dayjs(form.applicationStartDate).format(
+          "YYYY-MM-DD",
+        ),
+        applicationEndDate: dayjs(form.applicationEndDate).format("YYYY-MM-DD"),
+        tags: form.tags.join(",").trim(),
+        applyLink: form.applyLink,
+        shortDescription: form.shortDescription,
+        advNo: form.advNo,
+      };
+      const result = AddNewJobPostingSchema.safeParse(payload);
 
+      if (!result.success) {
+        throw new Error(
+          showZodValidationError(result.error.flatten().fieldErrors),
+        );
+      }
+
+      const formData = new FormData();
       formData.append("title", form.title);
-      formData.append(
-        "applicationStartDate",
-        form.applicationStartDate
-          ? dayjs(form.applicationStartDate).format("YYYY-MM-DD")
-          : "",
-      );
-      formData.append(
-        "applicationEndDate",
-        form.applicationEndDate
-          ? dayjs(form.applicationEndDate).format("YYYY-MM-DD")
-          : "",
-      );
-      formData.append("tags", form.tags.join(","));
-      formData.append("shortDescription", form.shortDescription);
-      formData.append("advNo", form.advNo);
-      formData.append("applyLink", form.applyLink);
+      formData.append("applicationStartDate", payload.applicationStartDate);
+      formData.append("applicationEndDate", payload.applicationEndDate);
+      formData.append("tags", payload.tags);
+      formData.append("shortDescription", payload.shortDescription);
+      formData.append("advNo", payload.advNo);
+      formData.append("applyLink", payload.applyLink);
       formData.append("status", true);
 
       if (file) formData.append("file", file);
