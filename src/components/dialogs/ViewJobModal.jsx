@@ -222,12 +222,17 @@ function ViewJobModal({ isOpen = false, onClose = () => {}, jobDetails = {} }) {
               Application ID: {jobDetails?.applicationId}
             </Typography>
 
-            <Typography
-              variant="body1"
-              sx={{ fontWeight: 700, fontFamily: "Roboto, Arial, sans-serif" }}
-            >
-              Advertisement No: {jobDetails?.advNo}
-            </Typography>
+            {jobDetails?.advNo && (
+              <Typography
+                variant="body1"
+                sx={{
+                  fontWeight: 700,
+                  fontFamily: "Roboto, Arial, sans-serif",
+                }}
+              >
+                Advertisement No: {jobDetails?.advNo}
+              </Typography>
+            )}
 
             <Typography
               variant="body1"
