@@ -30,6 +30,9 @@ function useAddJob(onSuccess) {
   const [advFile, setAdvFile] = useState(null); // PDF file
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { alert, handleAlertOnClose, reset, showErrorMsg } = useAppAlert();
+  const [showWhatsAppLinkGenDialog, setShowWhatsAppLinkGenDialog] =
+    useState(false);
+  const [showMdEditor, setShowMdEditor] = useState(false);
 
   // ── Field handlers ─────────────────────────────────────────────────────────
 
@@ -51,6 +54,14 @@ function useAddJob(onSuccess) {
     }));
   }, []);
 
+  const handleWhatsAppLinkDialog = useCallback(function () {
+    setShowWhatsAppLinkGenDialog((prev) => !prev);
+  }, []);
+
+  const handleMdEditorDialog = useCallback(function () {
+    setShowMdEditor((prev) => !prev);
+  }, []);
+
   const handleRemoveTag = useCallback((tag) => {
     setForm((prev) => ({
       ...prev,
@@ -61,6 +72,8 @@ function useAddJob(onSuccess) {
   // ── Submit ──────────────────────────────────────────────────────────────────
 
   const handleSubmit = useCallback(async () => {
+    if (form.shortDescription.length > 700) return;
+
     reset();
     setIsSubmitting(true);
 
@@ -111,6 +124,11 @@ function useAddJob(onSuccess) {
     }
   }, [form, file, advFile, onSuccess]);
 
+  const handleMdEditorSubmitBtnClick = useCallback(function (value) {
+    setForm((prev) => ({ ...prev, shortDescription: value }));
+    handleMdEditorDialog();
+  }, []);
+
   // ── Reset (e.g. on modal close) ────────────────────────────────────────────
 
   const resetForm = useCallback(() => {
@@ -126,6 +144,11 @@ function useAddJob(onSuccess) {
     advFile,
     isSubmitting,
     alert,
+    showWhatsAppLinkGenDialog,
+    showMdEditor,
+    handleMdEditorSubmitBtnClick,
+    handleMdEditorDialog,
+    handleWhatsAppLinkDialog,
     handleAlertOnClose,
     handleChange,
     handleDateChange,

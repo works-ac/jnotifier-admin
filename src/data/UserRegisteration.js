@@ -3,9 +3,9 @@ export const UserRegisteration = {
   email: "",
   phone: "",
   password: "",
-  category: "GEN",
-  isPwd: false,
   captchaId: "",
   captcha: "",
   gender: "M",
+  companyName: "",
+  address: "",
 };

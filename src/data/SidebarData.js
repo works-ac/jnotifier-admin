@@ -4,7 +4,7 @@ import WorkIcon from "@mui/icons-material/Work";
 import SearchIcon from "@mui/icons-material/Search";
 import AddAlertIcon from "@mui/icons-material/AddAlert";
 import MovieIcon from "@mui/icons-material/Movie";
-import { Dashboard, Storage } from "@mui/icons-material";
+import { Dashboard, People, Settings, Storage } from "@mui/icons-material";
 
 /**
  * Sidebar navigation data with role-based visibility.
@@ -68,6 +68,13 @@ export const SidebarNavData = [
     href: "/dashboard",
   },
   {
+    id: "user-mgmt",
+    label: "User Management",
+    icon: People,
+    roles: ["ROLE_SUPERADMIN"],
+    href: "/sa/user-management",
+  },
+  {
     id: "masters",
     label: "Masters",
     icon: Storage,
@@ -80,6 +87,13 @@ export const SidebarNavData = [
         href: "/masters/job-categories",
       },
     ],
+  },
+  {
+    id: "utilities",
+    label: "Utilities",
+    icon: Settings,
+    roles: ["ROLE_ADMIN"],
+    href: "/utilities",
   },
   {
     id: "account",

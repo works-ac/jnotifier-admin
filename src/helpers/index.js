@@ -110,3 +110,22 @@ export function showZodValidationError(fieldErr = {}) {
   const message = errObject[1] ?? "Please fill up the form correctly.";
   return message;
 }
+
+export function getWhatsAppLink(phone, message = "") {
+  if (!phone) return "";
+
+  // Remove all non-numeric characters (spaces, dashes, plus signs, brackets)
+  const cleanedPhone = phone.toString().replace(/\D/g, "");
+
+  if (!cleanedPhone) return "";
+
+  // Base URL for WhatsApp
+  let url = `https://wa.me/${cleanedPhone}`;
+
+  // Append a pre-filled message if provided
+  if (message) {
+    url += `?text=${encodeURIComponent(message)}`;
+  }
+
+  return url;
+}

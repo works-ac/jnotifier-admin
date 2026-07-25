@@ -43,6 +43,7 @@ const AddNoticeDialogDataLayout = [
         ),
       },
     },
+    helperText: "Please enter the description within 2500 characters.",
   },
 ];
 

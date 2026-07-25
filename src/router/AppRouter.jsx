@@ -4,11 +4,8 @@ import CheckAuthStatus from "../components/CheckAuthStatus";
 
 // Pages
 import HomePage from "../pages/HomePage";
-import ResultsPage from "../pages/ResultsPage";
 import NotFoundPage from "../pages/NotFoundPage";
-import JobDetailsPage from "../pages/JobDetailsPage";
 import AccountsPage from "../pages/AccountsPage";
-import AccountRegisterationPage from "../pages/AccountRegisterationPage";
 import RecoverAccountPage from "../pages/RecoverAccountPage";
 import ListedJobs from "../pages/ListedJobs";
 import NoticeListingPage from "../pages/NoticeListingPage";
@@ -16,6 +13,8 @@ import MediaPage from "../pages/MediaPage";
 import DashboardPage from "../pages/DashboardPage";
 import CheckPermissionStatus from "../components/core/CheckPermissionStatus";
 import JobCategoryMasterPage from "../pages/JobCategoryMasterPage";
+import UserMgmtPage from "../pages/sa/UserMgmtPage";
+import UtilitiesPage from "../pages/admin/UtilitiesPage";
 
 /**
  * Route structure:
@@ -77,6 +76,16 @@ const AppRoutes = createBrowserRouter([
         element: <AccountsPage />,
       },
       {
+        path: "/sa/user-management",
+        element: (
+          <CheckAuthStatus>
+            <CheckPermissionStatus allowedRoles={["ROLE_SUPERADMIN"]}>
+              <UserMgmtPage />
+            </CheckPermissionStatus>
+          </CheckAuthStatus>
+        ),
+      },
+      {
         path: "recover/account",
         element: <RecoverAccountPage />,
       },
@@ -86,6 +95,16 @@ const AppRoutes = createBrowserRouter([
           <CheckAuthStatus>
             <CheckPermissionStatus allowedRoles={["ROLE_ADMIN"]}>
               <MediaPage />
+            </CheckPermissionStatus>
+          </CheckAuthStatus>
+        ),
+      },
+      {
+        path: "utilities",
+        element: (
+          <CheckAuthStatus>
+            <CheckPermissionStatus allowedRoles={["ROLE_ADMIN"]}>
+              <UtilitiesPage />
             </CheckPermissionStatus>
           </CheckAuthStatus>
         ),

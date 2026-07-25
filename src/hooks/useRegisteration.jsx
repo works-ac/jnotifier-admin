@@ -4,9 +4,10 @@ import dayjs from "dayjs";
 import { useDispatch, useSelector } from "react-redux";
 import { UserRegisterSchema } from "../data/schema/UserRegisterationSchema";
 import useAppAlert from "./useAppAlert";
-import { register } from "../services/SignupService";
 import useCaptcha from "./useCaptcha";
-import { setSignupReply } from "../redux/slices/AuthSlice";
+import { setLoginRes, setSignupReply } from "../redux/slices/AuthSlice";
+import { registerAdmin } from "../services/UserMgmtService";
+import { showZodValidationError } from "../helpers";
 
 function useRegisteration() {
   const [isPwdVisible, setIsPwdVisible] = useState(false);
@@ -60,8 +61,9 @@ function useRegisteration() {
       });
 
       if (!result.success) {
-        const message =
-          result.error.message || "Please fill-up the form correctly";
+        const message = showZodValidationError(
+          result.error.flatten().fieldErrors,
+        );
 
         setAlert((prev) => ({ ...prev, message, type: "error", isOpen: true }));
         return;
@@ -72,19 +74,21 @@ function useRegisteration() {
         captchaId,
         dob: dayjs(dob).format("YYYY-MM-DD"),
         mobile: userRegPayload.phone,
+        role: "admin",
       };
 
       delete payload.phone;
       setIsSubmitting(true);
 
       try {
-        const response = await register(payload);
+        const response = await registerAdmin(payload);
         const reply = response.data?.data;
 
         await reloadCaptcha();
         setDob(dayjs());
         setUserRegPayload(UserRegisteration);
         dispatch(setSignupReply(reply));
+        dispatch(setLoginRes(reply));
         setShowOTPComponent(true);
       } catch (error) {
         showErrorMsg(error);

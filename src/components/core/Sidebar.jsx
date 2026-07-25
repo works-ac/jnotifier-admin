@@ -1,5 +1,12 @@
-import React, { useState } from "react";
-import { Box, Divider, Drawer, IconButton, List, Typography } from "@mui/material";
+import React from "react";
+import {
+  Box,
+  Divider,
+  Drawer,
+  IconButton,
+  List,
+  Typography,
+} from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
@@ -155,10 +162,15 @@ function Sidebar({ expanded, onToggle }) {
         <List sx={{ flexGrow: 1, pt: 1 }}>
           {visibleNavItems.map((item) =>
             item.children ? (
-              <NavGroup key={item.id} item={item} sidebarExpanded={expanded} onExpandSidebar={onToggle} />
+              <NavGroup
+                key={item.id}
+                item={item}
+                sidebarExpanded={expanded}
+                onExpandSidebar={onToggle}
+              />
             ) : (
               <NavItem key={item.id} item={item} sidebarExpanded={expanded} />
-            )
+            ),
           )}
         </List>
 

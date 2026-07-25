@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { AddNoticeAlertData } from "../../data/AddNoticeListing";
 import useAppAlert from "../useAppAlert";
 import { addNotice } from "../../services/NoticeService";
@@ -33,6 +32,7 @@ function useAddNoticeAlert() {
         typeof closeCallback !== "function"
       )
         return;
+      if (form.noticeDesc.length > 2500) return;
 
       setIsSubmitting(true);
       reset();
@@ -64,7 +64,6 @@ function useAddNoticeAlert() {
         successCallback();
         closeCallback();
       } catch (error) {
-        console.error("Error adding notice:", error);
         showErrorMsg(error);
       } finally {
         setIsSubmitting(false);

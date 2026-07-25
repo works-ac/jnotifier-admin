@@ -33,7 +33,8 @@ function useOTPVerification() {
       }
 
       if (onSuccess) {
-        onSuccess();
+        console.log(typeof onSuccess, "typeof onSuccess");
+        await onSuccess();
         return;
       }
 
