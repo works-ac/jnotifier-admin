@@ -175,5 +175,5 @@ else {
 }
 
 Write-Output "========================================"
-Write-Output "App deployed successfully 🚀🚀🚀🚀"
+Write-Host   "App deployed successfully 🚀🚀🚀🚀"
 Write-Output "========================================"

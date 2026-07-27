@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Button,
-  Chip,
-  InputAdornment,
-  Stack,
-  TextField,
-} from "@mui/material";
+import { Box, Button, Chip, InputAdornment, TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import PropTypes from "prop-types";
 import useAppCss from "../../hooks/useAppCss";
@@ -84,6 +77,7 @@ function TagsInput({
           }}
           required={isRequired}
           sx={RequiredFieldCss}
+          helperText="Press ENTER key to add a tag. Only numbers, alphabets, spaces and special characters like dash (-), forward slash (/) are allowed."
         />
         <Button
           variant="contained"
