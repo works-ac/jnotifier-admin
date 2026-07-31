@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from "react";
-import { getPageViews } from "../../services/ViewsService";
 
 function useViewNoticeModal() {
   const [isCopied, setIsCopied] = useState(false);

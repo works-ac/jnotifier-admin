@@ -46,6 +46,7 @@ function filterNavByRole(navData, userRole) {
 function Sidebar({ expanded, onToggle }) {
   const drawerWidth = expanded ? DRAWER_EXPANDED_WIDTH : DRAWER_COLLAPSED_WIDTH;
   const { userRole } = useSelector((state) => state.auth);
+  const appVersion = import.meta.env.VITE_APP_VERSION ?? "0.0.0";
 
   const visibleNavItems = filterNavByRole(SidebarNavData, userRole);
 
@@ -180,7 +181,7 @@ function Sidebar({ expanded, onToggle }) {
         {expanded && (
           <Box sx={{ p: 2 }}>
             <Typography variant="caption" color="text.secondary">
-              JNotifier Admin Panel v1.0
+              JNotifier Admin Panel v{appVersion}
             </Typography>
 
             {userRole && (
