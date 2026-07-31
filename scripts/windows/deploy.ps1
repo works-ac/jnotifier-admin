@@ -8,8 +8,8 @@ Write-Host "$esc[1;36m====================================================$esc[0
 
 $confirmDeploy = (Read-Host "Do you really want to deploy the application? (y/n)").ToLower().Trim()
 if ($confirmDeploy -ne "y" -and $confirmDeploy -ne "yes") {
-    Write-Output "Deployment cancelled."
-    exit 0
+  Write-Output "Deployment cancelled."
+  exit 0
 }
 
 
@@ -41,23 +41,24 @@ if (Test-Path -Path $credentialPath) {
 
   $addMoreArgs = (Read-Host "Do you want to add other build arguments? (y/n)").ToLower().Trim()
   if ($addMoreArgs -eq "y" -or $addMoreArgs -eq "yes") {
-      while ($true) {
-          $keyName = Read-Host "  Enter build arg key name (or 'q' to finish)"
-          if ($keyName -eq "q") {
-              break
-          }
-          if ($keyName) {
-              $value = Read-Host "  Enter build arg value"
-              $newArg = "--build-arg $keyName=$value"
-              if ($credentials.BuildArgs) {
-                  $credentials.BuildArgs = "$($credentials.BuildArgs) $newArg"
-              } else {
-                  $credentials.BuildArgs = $newArg
-              }
-          }
+    while ($true) {
+      $keyName = Read-Host "  Enter build arg key name (or 'q' to finish)"
+      if ($keyName -eq "q") {
+        break
       }
-      $data = $credentials | ConvertTo-Json -Depth 10
-      Set-Content -Path $credentialPath -Value $data -Encoding UTF8
+      if ($keyName) {
+        $value = Read-Host "  Enter build arg value"
+        $newArg = "--build-arg $keyName=$value"
+        if ($credentials.BuildArgs) {
+          $credentials.BuildArgs = "$($credentials.BuildArgs) $newArg"
+        }
+        else {
+          $credentials.BuildArgs = $newArg
+        }
+      }
+    }
+    $data = $credentials | ConvertTo-Json -Depth 10
+    Set-Content -Path $credentialPath -Value $data -Encoding UTF8
   }
   
   Write-Output "================================="
@@ -66,7 +67,8 @@ if (Test-Path -Path $credentialPath) {
 
   if ($credentials.BuildArgs) {
     Invoke-Expression "docker build $($credentials.BuildArgs) -t $($credentials.ImgName) ."
-  } else {
+  }
+  else {
     docker build -t $($credentials.ImgName) .
   }
   CheckCmdStatus -Msg "Build failed, exiting..."
@@ -126,6 +128,7 @@ else {
   $viteWhatsappLink = Read-Host "  VITE_WHATSAPP_CHANNEL_LINK"
   $viteTelegramLink = Read-Host "  VITE_TELEGRAM_CHANNEL_LINK"
   $viteProdAdminPanelUrl = Read-Host "  VITE_PRODUCTION_ADMIN_PANEL_URL"
+  $viteAppVersion = Read-Host "  VITE_APP_VERSION"
 
   $buildArgsList = @()
   if ($viteApiBaseUrl) { $buildArgsList += "--build-arg VITE_API_BASE_URL=$viteApiBaseUrl" }
@@ -133,6 +136,9 @@ else {
   if ($viteWhatsappLink) { $buildArgsList += "--build-arg VITE_WHATSAPP_CHANNEL_LINK=$viteWhatsappLink" }
   if ($viteTelegramLink) { $buildArgsList += "--build-arg VITE_TELEGRAM_CHANNEL_LINK=$viteTelegramLink" }
   if ($viteProdAdminPanelUrl) { $buildArgsList += "--build-arg VITE_PRODUCTION_ADMIN_PANEL_URL=$viteProdAdminPanelUrl" }
+  if ($viteAppVersion) {
+    $buildArgsList += "--build-arg VITE_APP_VERSION=$viteAppVersion"
+  }
   $buildArgs = $buildArgsList -join " "
 
   Write-Output "========================================"
@@ -141,7 +147,8 @@ else {
 
   if ($buildArgs) {
     Invoke-Expression "docker build $buildArgs -t `"$dockerUsername/$imgName`" ."
-  } else {
+  }
+  else {
     docker build -t "$dockerUsername/$imgName" .
   }
   CheckCmdStatus -Msg "Build failed, exiting..."
