@@ -13,6 +13,7 @@ import { useSelector } from "react-redux";
 import NavItem from "./NavItem";
 import NavGroup from "./NavGroup";
 import { SidebarNavData } from "../../data/SidebarData";
+import { getRoleName } from "../../helpers";
 
 const DRAWER_EXPANDED_WIDTH = 240;
 const DRAWER_COLLAPSED_WIDTH = 64;
@@ -181,18 +182,26 @@ function Sidebar({ expanded, onToggle }) {
         {expanded && (
           <Box sx={{ p: 2 }}>
             <Typography variant="caption" color="text.secondary">
-              JNotifier Admin Panel v{appVersion}
+              Job Notifier Admin Panel
             </Typography>
 
             {userRole && (
               <Typography
                 variant="caption"
                 color="secondary"
-                sx={{ display: "block", fontWeight: 700, mt: 0.5 }}
+                sx={{ display: "block", fontWeight: 700 }}
               >
-                Role: {userRole}
+                Role: {getRoleName(userRole)}
               </Typography>
             )}
+
+            <Typography
+              variant="caption"
+              color="secondary"
+              sx={{ display: "block", fontWeight: 700 }}
+            >
+              Version: v{appVersion}
+            </Typography>
           </Box>
         )}
       </Box>

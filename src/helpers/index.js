@@ -1,3 +1,5 @@
+import { AppConstants } from "../app/AppConstants";
+
 export function getInitials(name = "") {
   if (!name) return null;
 
@@ -128,4 +130,17 @@ export function getWhatsAppLink(phone, message = "") {
   }
 
   return url;
+}
+
+export function getRoleName(role) {
+  switch (role) {
+    case AppConstants.ROLES.ADMIN:
+      return "Admin";
+    case AppConstants.ROLES.SA:
+      return "Super Admin";
+    case AppConstants.ROLES.USER:
+      return "User";
+    default:
+      return "Unknown Role";
+  }
 }

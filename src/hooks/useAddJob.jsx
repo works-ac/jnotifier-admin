@@ -158,6 +158,7 @@ function useAddJob(onSuccess) {
     setAdvFile,
     handleSubmit,
     resetForm,
+    setForm,
   };
 }
 

@@ -35,7 +35,7 @@ const OtpInput = ({
     const value = e.target.value;
 
     // Allow only numbers
-    if (isNaN(value)) return;
+    if (Number.isNaN(value)) return;
 
     const newOtp = [...otp];
     // Take the last character in case the user types very fast
@@ -92,7 +92,7 @@ const OtpInput = ({
     const pastedData = e.clipboardData.getData("text").trim();
 
     // Stop if pasted data isn't numbers
-    if (isNaN(pastedData)) return;
+    if (Number.isNaN(pastedData)) return;
 
     const pastedArray = pastedData.slice(0, length).split("");
     const newOtp = [...otp];

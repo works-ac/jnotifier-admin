@@ -35,6 +35,7 @@ import AppTooltip from "../core/AppTooltip";
 import WhatsAppLinkGeneratorModal from "./WhatsAppLinkGeneratorModal";
 import FlexBox from "../styled/FlexBox";
 import MarkdownEditorModal from "./MarkdownEditorModal";
+import useAppMdEditor from "../../hooks/core/useAppMdEditor";
 
 /**
  * AddJobModal — Dialog form to create a new job listing.
@@ -53,9 +54,6 @@ function AddJobModal({ open, onClose, onSuccess }) {
     isSubmitting,
     alert,
     showWhatsAppLinkGenDialog,
-    showMdEditor,
-    handleMdEditorSubmitBtnClick,
-    handleMdEditorDialog,
     handleWhatsAppLinkDialog,
     handleAlertOnClose,
     handleChange,
@@ -66,7 +64,11 @@ function AddJobModal({ open, onClose, onSuccess }) {
     setAdvFile,
     handleSubmit,
     resetForm,
+    setForm,
   } = useAddJob(onSuccess);
+
+  const { handleMdEditorSubmitBtnClick, showMdEditor, handleMdEditorDialog } =
+    useAppMdEditor(setForm);
   const { RequiredFieldCss } = useAppCss();
 
   const handleClose = () => {
@@ -459,6 +461,7 @@ function AddJobModal({ open, onClose, onSuccess }) {
           isOpen={showMdEditor}
           onClose={handleMdEditorDialog}
           onSubmitHandler={handleMdEditorSubmitBtnClick}
+          name="shortDescription"
         />
       )}
     </>

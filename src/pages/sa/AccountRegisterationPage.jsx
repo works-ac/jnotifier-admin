@@ -4,12 +4,14 @@ import {
   CircularProgress,
   Divider,
   FormControl,
+  FormControlLabel,
   Grid,
   InputAdornment,
   InputLabel,
   MenuItem,
   Paper,
   Select,
+  Switch,
   TextField,
   Typography,
   useTheme,
@@ -38,22 +40,24 @@ import OTPVerification from "../../components/OTPVerification";
 function AccountRegisterationPage({ onSuccess }) {
   const theme = useTheme();
   const {
-    isPwdVisible,
     togglePwdVisibility,
-    textfieldType,
     handleTextBoxOnChange,
-    userRegPayload,
     handleDobOnChange,
-    dob,
-    alert,
     handleAlertOnClose,
     handleFormSubmit,
+    toggleProceedToUserVerification,
+    isProceedToUserVerification,
+    isPwdVisible,
+    textfieldType,
+    userRegPayload,
+    dob,
+    alert,
     isSubmitting,
     showOTPComponent,
-  } = useRegisteration();
+  } = useRegisteration(onSuccess);
   const { RequiredFieldCss } = useAppCss();
 
-  if (showOTPComponent) {
+  if (showOTPComponent && isproceedToUserVerification) {
     return (
       <Paper
         variant="elevation"
@@ -73,33 +77,14 @@ function AccountRegisterationPage({ onSuccess }) {
   return (
     <Paper
       variant="elevation"
-      elevation={4}
+      elevation={2}
       sx={(theme) => ({
-        padding: { xs: "1.5rem", md: "2.5rem" },
+        padding: "1.5rem",
         borderRadius: "16px",
         width: "100%",
         border: `1px solid ${theme.palette.secondary["A50"]}`,
       })}
     >
-      <Box component="div" sx={{ my: 2 }}>
-        <Typography
-          variant="h4"
-          sx={{
-            fontWeight: 700,
-            textTransform: "uppercase",
-            textDecoration: "underline",
-            textUnderlineOffset: "4px",
-          }}
-          color="primary"
-        >
-          Job Notifier
-        </Typography>
-
-        <Typography variant="caption" color="secondary">
-          Create your account and apply for various job opportunities.
-        </Typography>
-      </Box>
-
       <AppAlert
         alert={alert}
         handleAlertOnClose={handleAlertOnClose}
@@ -285,6 +270,14 @@ function AccountRegisterationPage({ onSuccess }) {
         autoFocus
       />
 
+      <FormControlLabel
+        required
+        checked={isProceedToUserVerification}
+        onChange={toggleProceedToUserVerification}
+        control={<Switch color="warning" />}
+        label="Do you want to proceed with user verification now?"
+      />
+
       <Box
         component="div"
         sx={{
@@ -340,11 +333,6 @@ function AccountRegisterationPage({ onSuccess }) {
 
       <Notes
         note="All fields marked with asterisk (*) are mandatory to fill."
-        noteColor={theme.palette.secondary.main}
-      />
-
-      <Notes
-        note="We use your date of birth and category to determine your eligibility when you apply for a job."
         noteColor={theme.palette.secondary.main}
       />
     </Paper>

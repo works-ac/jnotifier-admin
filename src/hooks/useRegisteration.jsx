@@ -9,7 +9,7 @@ import { setLoginRes, setSignupReply } from "../redux/slices/AuthSlice";
 import { registerAdmin } from "../services/UserMgmtService";
 import { showZodValidationError } from "../helpers";
 
-function useRegisteration() {
+function useRegisteration(onSuccess) {
   const [isPwdVisible, setIsPwdVisible] = useState(false);
   const [textfieldType, setTextfieldType] = useState("password");
   const [userRegPayload, setUserRegPayload] = useState(UserRegisteration);
@@ -19,6 +19,8 @@ function useRegisteration() {
     useAppAlert();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showOTPComponent, setShowOTPComponent] = useState(false);
+  const [isProceedToUserVerification, setIsProceedToUserVerification] =
+    useState(true);
   const { reloadCaptcha } = useCaptcha();
   const dispatch = useDispatch();
 
@@ -29,6 +31,10 @@ function useRegisteration() {
     },
     [isPwdVisible, textfieldType],
   );
+
+  const toggleProceedToUserVerification = useCallback(function () {
+    setIsProceedToUserVerification((prev) => !prev);
+  }, []);
 
   const handleTextBoxOnChange = useCallback(function (e) {
     const { name, value, checked, type } = e.target || {};
@@ -88,15 +94,20 @@ function useRegisteration() {
         setDob(dayjs());
         setUserRegPayload(UserRegisteration);
         dispatch(setSignupReply(reply));
-        dispatch(setLoginRes(reply));
-        setShowOTPComponent(true);
+
+        if (isProceedToUserVerification) {
+          dispatch(setLoginRes(reply));
+          setShowOTPComponent(true);
+        } else {
+          await onSuccess?.();
+        }
       } catch (error) {
         showErrorMsg(error);
       } finally {
         setIsSubmitting(false);
       }
     },
-    [userRegPayload],
+    [userRegPayload, isProceedToUserVerification],
   );
 
   return {
@@ -107,6 +118,8 @@ function useRegisteration() {
     alert,
     isSubmitting,
     showOTPComponent,
+    isProceedToUserVerification,
+    toggleProceedToUserVerification,
     handleAlertOnClose,
     togglePwdVisibility,
     handleTextBoxOnChange,

@@ -57,7 +57,7 @@ function NewAccountCreationModal({ onClose, onSuccess, isOpen }) {
             variant="h6"
             sx={{ fontWeight: 700, fontFamily: "Roboto" }}
           >
-            New Account Creation
+            New Admin Account Registration
           </Typography>
         </DialogTitle>
       </Box>

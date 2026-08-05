@@ -15,6 +15,8 @@ import CheckPermissionStatus from "../components/core/CheckPermissionStatus";
 import JobCategoryMasterPage from "../pages/JobCategoryMasterPage";
 import UserMgmtPage from "../pages/sa/UserMgmtPage";
 import UtilitiesPage from "../pages/admin/UtilitiesPage";
+import HelpCentrePage from "../pages/HelpCentrePage";
+import ErrorPage from "../pages/core/ErrorPage";
 
 /**
  * Route structure:
@@ -100,6 +102,18 @@ const AppRoutes = createBrowserRouter([
         ),
       },
       {
+        path: "help",
+        element: (
+          <CheckAuthStatus>
+            <CheckPermissionStatus
+              allowedRoles={["ROLE_ADMIN", "ROLE_SUPERADMIN"]}
+            >
+              <HelpCentrePage />
+            </CheckPermissionStatus>
+          </CheckAuthStatus>
+        ),
+      },
+      {
         path: "utilities",
         element: (
           <CheckAuthStatus>
@@ -134,6 +148,7 @@ const AppRoutes = createBrowserRouter([
         element: <NotFoundPage />,
       },
     ],
+    errorElement: <ErrorPage />,
   },
 ]);
 

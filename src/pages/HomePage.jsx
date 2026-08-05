@@ -15,10 +15,23 @@ function HomePage() {
         gap: 3,
       }}
     >
-      <ResponsiveImage src="/logo.png" alt="JNotifier Logo" aspectRatio="1/1" maxWidth="240px" />
+      <ResponsiveImage
+        src="/logo.png"
+        alt="JNotifier Logo"
+        aspectRatio="1/1"
+        maxWidth="240px"
+      />
 
-      <Typography variant="h4" sx={{ fontWeight: 700 }} color="primary">
-        Welcome to JNotifier Admin Panel
+      <Typography variant="h2" sx={{ fontWeight: 900 }} color="primary">
+        Welcome to Job Notifier
+      </Typography>
+
+      <Typography
+        variant="h6"
+        sx={{ fontWeight: 700, textAlign: "center", fontStyle: "oblique" }}
+        color="primary"
+      >
+        a product of Coding Works
       </Typography>
     </Box>
   );
