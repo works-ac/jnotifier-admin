@@ -10,5 +10,5 @@ export const AddNewJobPostingSchema = z.object({
   tags: z.string(),
   shortDescription: z.string().max(700, "Short description is too long"),
   advNo: z.string().max(100, "Advertisement number is too long").optional(),
-  applyLink: z.string().max(100, "Apply link is too long"),
+  applyLink: z.string().max(2048, "Apply link is too long"),
 });

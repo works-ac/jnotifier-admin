@@ -73,6 +73,7 @@ function useAddJob(onSuccess) {
 
   const handleSubmit = useCallback(async () => {
     if (form.shortDescription.length > 700) return;
+    if (isSubmitting) return;
 
     reset();
     setIsSubmitting(true);
@@ -93,7 +94,7 @@ function useAddJob(onSuccess) {
 
       if (!result.success) {
         throw new Error(
-          showZodValidationError(result.error.flatten().fieldErrors),
+          showZodValidationError(result.error.flatten({}).fieldErrors),
         );
       }
 
@@ -122,7 +123,7 @@ function useAddJob(onSuccess) {
     } finally {
       setIsSubmitting(false);
     }
-  }, [form, file, advFile, onSuccess]);
+  }, [form, file, advFile, onSuccess, isSubmitting]);
 
   const handleMdEditorSubmitBtnClick = useCallback(function (value) {
     setForm((prev) => ({ ...prev, shortDescription: value }));
