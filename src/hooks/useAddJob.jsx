@@ -94,7 +94,7 @@ function useAddJob(onSuccess) {
 
       if (!result.success) {
         throw new Error(
-          showZodValidationError(result.error.flatten({}).fieldErrors),
+          showZodValidationError(result.error.flatten().fieldErrors),
         );
       }
 
@@ -119,6 +119,7 @@ function useAddJob(onSuccess) {
       setAdvFile(null);
       onSuccess?.();
     } catch (error) {
+      console.error(error, "error");
       showErrorMsg(error);
     } finally {
       setIsSubmitting(false);

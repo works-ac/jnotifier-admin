@@ -107,7 +107,6 @@ export function maskEmail(email) {
 }
 
 export function showZodValidationError(fieldErr = {}) {
-  console.error(fieldErr);
   const errObject = Object.entries(fieldErr).at(0);
   const message = errObject[1] ?? "Please fill up the form correctly.";
   return message;
