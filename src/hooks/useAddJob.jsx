@@ -1,9 +1,11 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useAppAlert from "./useAppAlert";
 import { createJob } from "../services/JobService";
 import dayjs from "dayjs";
 import { AddNewJobPostingSchema } from "../data/schema/AddNewJobPostingSchema";
 import { showZodValidationError } from "../helpers";
+import { useDispatch, useSelector } from "react-redux";
+import { clearJob, saveJob } from "../redux/slices/JobSlice";
 
 const INITIAL_FORM = {
   title: "",
@@ -23,16 +25,53 @@ const INITIAL_FORM = {
  *
  * @param {function} onSuccess - called after a successful createJob() so the
  *                               parent can close the modal and refresh the table.
+ * @param {boolean} open - whether the modal dialog is currently open
  */
-function useAddJob(onSuccess) {
+function useAddJob(onSuccess, open = false) {
   const [form, setForm] = useState(INITIAL_FORM);
   const [file, setFile] = useState(null); // markdown file
   const [advFile, setAdvFile] = useState(null); // PDF file
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { alert, handleAlertOnClose, reset, showErrorMsg } = useAppAlert();
+  const { alert, setAlert, handleAlertOnClose, reset, showErrorMsg } =
+    useAppAlert();
   const [showWhatsAppLinkGenDialog, setShowWhatsAppLinkGenDialog] =
     useState(false);
   const [showMdEditor, setShowMdEditor] = useState(false);
+  const dispatch = useDispatch();
+  const draftJob = useSelector((state) => state.job);
+
+  useEffect(() => {
+    if (open && draftJob) {
+      const hasDraft =
+        Boolean(draftJob.title) ||
+        Boolean(draftJob.applicationStartDate) ||
+        Boolean(draftJob.applicationEndDate) ||
+        (Array.isArray(draftJob.tags) && draftJob.tags.length > 0) ||
+        Boolean(draftJob.applyLink) ||
+        Boolean(draftJob.shortDescription) ||
+        Boolean(draftJob.advNo);
+
+      if (hasDraft) {
+        setForm({
+          title: draftJob.title || "",
+          applicationStartDate:
+            draftJob.applicationStartDate &&
+            dayjs(draftJob.applicationStartDate).isValid()
+              ? dayjs(draftJob.applicationStartDate)
+              : null,
+          applicationEndDate:
+            draftJob.applicationEndDate &&
+            dayjs(draftJob.applicationEndDate).isValid()
+              ? dayjs(draftJob.applicationEndDate)
+              : null,
+          tags: Array.isArray(draftJob.tags) ? draftJob.tags : [],
+          shortDescription: draftJob.shortDescription || "",
+          advNo: draftJob.advNo || "",
+          applyLink: draftJob.applyLink || "",
+        });
+      }
+    }
+  }, [open]);
 
   // ── Field handlers ─────────────────────────────────────────────────────────
 
@@ -81,10 +120,14 @@ function useAddJob(onSuccess) {
     try {
       const payload = {
         title: form.title,
-        applicationStartDate: dayjs(form.applicationStartDate).format(
-          "YYYY-MM-DD",
-        ),
-        applicationEndDate: dayjs(form.applicationEndDate).format("YYYY-MM-DD"),
+        applicationStartDate:
+          form.applicationStartDate && dayjs(form.applicationStartDate).isValid()
+            ? dayjs(form.applicationStartDate).format("YYYY-MM-DD")
+            : "",
+        applicationEndDate:
+          form.applicationEndDate && dayjs(form.applicationEndDate).isValid()
+            ? dayjs(form.applicationEndDate).format("YYYY-MM-DD")
+            : "",
         tags: form.tags.join(",").trim(),
         applyLink: form.applyLink,
         shortDescription: form.shortDescription,
@@ -95,6 +138,20 @@ function useAddJob(onSuccess) {
       if (!result.success) {
         throw new Error(
           showZodValidationError(result.error.flatten().fieldErrors),
+        );
+      }
+
+      const applicationStartDate = dayjs(payload.applicationStartDate);
+      const applicationEndDate = dayjs(payload.applicationEndDate);
+      const todayDate = dayjs().startOf("day");
+
+      if (applicationStartDate.isBefore(todayDate)) {
+        throw new Error("Application start date cannot be in the past.");
+      }
+
+      if (applicationEndDate.isBefore(applicationStartDate)) {
+        throw new Error(
+          "Application end date cannot be before the application start date.",
         );
       }
 
@@ -117,14 +174,49 @@ function useAddJob(onSuccess) {
       setForm(INITIAL_FORM);
       setFile(null);
       setAdvFile(null);
+      dispatch(clearJob());
       onSuccess?.();
     } catch (error) {
-      console.error(error, "error");
       showErrorMsg(error);
     } finally {
       setIsSubmitting(false);
     }
-  }, [form, file, advFile, onSuccess, isSubmitting]);
+  }, [form, file, advFile, onSuccess, isSubmitting, reset, dispatch, showErrorMsg]);
+
+  const handleSaveAsDraft = useCallback(async () => {
+    try {
+      const startDateValid =
+        form.applicationStartDate &&
+        dayjs(form.applicationStartDate).isValid();
+      const endDateValid =
+        form.applicationEndDate &&
+        dayjs(form.applicationEndDate).isValid();
+
+      const payload = {
+        title: form.title || "",
+        applicationStartDate: startDateValid
+          ? dayjs(form.applicationStartDate).format("YYYY-MM-DD")
+          : null,
+        applicationEndDate: endDateValid
+          ? dayjs(form.applicationEndDate).format("YYYY-MM-DD")
+          : null,
+        tags: form.tags || [],
+        applyLink: form.applyLink || "",
+        shortDescription: form.shortDescription || "",
+        advNo: form.advNo || "",
+      };
+
+      dispatch(saveJob(payload));
+      setAlert({
+        isOpen: true,
+        message: "Job saved as draft successfully!",
+        type: "success",
+      });
+    } catch (error) {
+      console.error("Error saving job as draft:", error);
+      showErrorMsg(error);
+    }
+  }, [form, dispatch, setAlert, showErrorMsg]);
 
   const handleMdEditorSubmitBtnClick = useCallback(function (value) {
     setForm((prev) => ({ ...prev, shortDescription: value }));
@@ -161,6 +253,7 @@ function useAddJob(onSuccess) {
     handleSubmit,
     resetForm,
     setForm,
+    handleSaveAsDraft,
   };
 }
 

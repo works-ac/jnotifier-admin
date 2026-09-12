@@ -6,7 +6,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle,
   Divider,
   InputAdornment,
   TextField,
@@ -16,8 +15,8 @@ import {
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import {
   Add,
-  Close,
   Description,
+  Drafts,
   InsertLink,
   Numbers,
   OpenInNew,
@@ -36,6 +35,7 @@ import WhatsAppLinkGeneratorModal from "./WhatsAppLinkGeneratorModal";
 import FlexBox from "../styled/FlexBox";
 import MarkdownEditorModal from "./MarkdownEditorModal";
 import useAppMdEditor from "../../hooks/core/useAppMdEditor";
+import AppDialogTitle from "../core/AppDialogTitle";
 
 /**
  * AddJobModal — Dialog form to create a new job listing.
@@ -65,7 +65,8 @@ function AddJobModal({ open, onClose, onSuccess }) {
     handleSubmit,
     resetForm,
     setForm,
-  } = useAddJob(onSuccess);
+    handleSaveAsDraft,
+  } = useAddJob(onSuccess, open);
 
   const { handleMdEditorSubmitBtnClick, showMdEditor, handleMdEditorDialog } =
     useAppMdEditor(setForm);
@@ -88,20 +89,11 @@ function AddJobModal({ open, onClose, onSuccess }) {
         PaperProps={{ sx: { borderRadius: 3 } }}
       >
         {/* ── Title bar ── */}
-        <DialogTitle
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1,
-            fontWeight: 700,
-            bgcolor: "primary.main",
-            color: "white",
-            py: 2,
-          }}
-        >
-          <Work fontSize="small" />
-          Add New Job
-        </DialogTitle>
+        <AppDialogTitle
+          Icon={<Work fontSize="small" />}
+          onClose={handleClose}
+          title="Add New Job"
+        />
 
         <Divider />
 
@@ -137,6 +129,7 @@ function AddJobModal({ open, onClose, onSuccess }) {
                   style: { fontWeight: 700, color: theme.palette.primary.main },
                 },
               }}
+              helperText="It can be atmost 32 characters long."
             />
 
             {/* ── Row 2: Start Date | End Date | Adv No (3 cols) ── */}
@@ -200,6 +193,7 @@ function AddJobModal({ open, onClose, onSuccess }) {
                       ),
                     },
                   }}
+                  helperText="Optional field. It can be atmost 100 characters long."
                 />
               </Box>
             </Box>
@@ -310,6 +304,7 @@ function AddJobModal({ open, onClose, onSuccess }) {
                   *
                 </Box>
               </Typography>
+
               <TagsInput
                 tags={form.tags}
                 onAddTag={handleAddTag}
@@ -411,6 +406,11 @@ function AddJobModal({ open, onClose, onSuccess }) {
             />
 
             <Notes
+              note="Kindly do not refresh the page to avoid losing the saved draft job data."
+              noteColor={theme.palette.secondary.main}
+            />
+
+            <Notes
               note="Only markdown and pdf files are supported."
               noteColor={theme.palette.secondary.main}
             />
@@ -423,12 +423,12 @@ function AddJobModal({ open, onClose, onSuccess }) {
         <DialogActions sx={{ px: 3, py: 2, gap: 1 }}>
           <Button
             variant="outlined"
-            color="inherit"
-            startIcon={<Close fontSize="small" />}
-            onClick={handleClose}
+            color="primary"
+            startIcon={<Drafts fontSize="small" />}
+            onClick={handleSaveAsDraft}
             disabled={isSubmitting}
           >
-            Cancel
+            Save as Draft
           </Button>
 
           <Button

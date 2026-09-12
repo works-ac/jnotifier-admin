@@ -21,6 +21,7 @@ import { manageJobState } from "../../services/JobService";
 import { toast } from "react-toastify";
 import { getToastNotification } from "../../helpers";
 import useViews from "../core/useViews";
+import dayjs from "dayjs";
 
 export default function useMRTColDefsFactory() {
   const { GlobalChipCss } = useAppCss();
@@ -83,7 +84,7 @@ export default function useMRTColDefsFactory() {
         header: "Application Start Date",
         Cell: ({ cell }) => (
           <Chip
-            label={cell?.getValue()}
+            label={dayjs(cell?.getValue()).format("DD-MM-YYYY")}
             sx={GlobalChipCss}
             icon={<DateRangeTwoTone fontSize="small" color="success" />}
             variant="outlined"
@@ -95,7 +96,7 @@ export default function useMRTColDefsFactory() {
         header: "Application End Date",
         Cell: ({ cell }) => (
           <Chip
-            label={cell?.getValue()}
+            label={dayjs(cell?.getValue()).format("DD-MM-YYYY")}
             sx={GlobalChipCss}
             icon={<DateRangeTwoTone fontSize="small" color="success" />}
             variant="outlined"
@@ -107,11 +108,7 @@ export default function useMRTColDefsFactory() {
         header: "Post Date",
         Cell: ({ cell }) => (
           <Chip
-            label={new Date(cell?.getValue())
-              ?.toLocaleDateString("en-IN")
-              ?.split("/")
-              ?.reverse()
-              .join("-")}
+            label={dayjs(cell?.getValue()).format("DD-MM-YYYY")}
             sx={GlobalChipCss}
             icon={<DateRangeTwoTone fontSize="small" color="success" />}
             variant="outlined"

@@ -148,7 +148,7 @@ const AppRoutes = createBrowserRouter([
         element: <NotFoundPage />,
       },
     ],
-    errorElement: <ErrorPage />,
+    // errorElement: <ErrorPage />,
   },
 ]);
 
