@@ -24,6 +24,10 @@ export const jobSlice = createSlice({
       state.advNo = action.payload.advNo;
     },
 
+    saveJobDescription: (state, action) => {
+      state.shortDescription = action.payload.shortDescription;
+    },
+
     clearJob: (state) => {
       state.title = "";
       state.applicationStartDate = null;
@@ -36,5 +40,5 @@ export const jobSlice = createSlice({
   },
 });
 
-export const { saveJob, clearJob } = jobSlice.actions;
+export const { saveJob, saveJobDescription, clearJob } = jobSlice.actions;
 export default jobSlice.reducer;

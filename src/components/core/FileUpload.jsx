@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -8,6 +8,8 @@ import {
 } from "@mui/material";
 import { CloudUpload, UploadFile } from "@mui/icons-material";
 import PropTypes from "prop-types";
+import { useDispatch } from "react-redux";
+import { toggleState } from "../../redux/slices/FileUploadSlice";
 
 function FileUpload({
   onFileChange,
@@ -26,6 +28,11 @@ function FileUpload({
   const [validationError, setValidationError] = useState(null);
 
   const inputRef = useRef(null);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(toggleState());
+  }, [isSimulating]);
 
   function simulateProgress(file) {
     setSelectedFile(file);

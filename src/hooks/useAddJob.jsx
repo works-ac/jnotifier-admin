@@ -5,7 +5,11 @@ import dayjs from "dayjs";
 import { AddNewJobPostingSchema } from "../data/schema/AddNewJobPostingSchema";
 import { showZodValidationError } from "../helpers";
 import { useDispatch, useSelector } from "react-redux";
-import { clearJob, saveJob } from "../redux/slices/JobSlice";
+import {
+  clearJob,
+  saveJob,
+  saveJobDescription,
+} from "../redux/slices/JobSlice";
 
 const INITIAL_FORM = {
   title: "",
@@ -39,6 +43,7 @@ function useAddJob(onSuccess, open = false) {
   const [showMdEditor, setShowMdEditor] = useState(false);
   const dispatch = useDispatch();
   const draftJob = useSelector((state) => state.job);
+  const { isDisabled } = useSelector((state) => state.file);
 
   useEffect(() => {
     if (open && draftJob) {
@@ -77,6 +82,11 @@ function useAddJob(onSuccess, open = false) {
 
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
+
+    if (name === "shortDescription") {
+      dispatch(saveJobDescription({ shortDescription: value }));
+    }
+
     setForm((prev) => ({ ...prev, [name]: value }));
   }, []);
 
@@ -112,7 +122,7 @@ function useAddJob(onSuccess, open = false) {
 
   const handleSubmit = useCallback(async () => {
     if (form.shortDescription.length > 700) return;
-    if (isSubmitting) return;
+    if (isSubmitting || isDisabled) return;
 
     reset();
     setIsSubmitting(true);
@@ -121,7 +131,8 @@ function useAddJob(onSuccess, open = false) {
       const payload = {
         title: form.title,
         applicationStartDate:
-          form.applicationStartDate && dayjs(form.applicationStartDate).isValid()
+          form.applicationStartDate &&
+          dayjs(form.applicationStartDate).isValid()
             ? dayjs(form.applicationStartDate).format("YYYY-MM-DD")
             : "",
         applicationEndDate:
@@ -141,12 +152,18 @@ function useAddJob(onSuccess, open = false) {
         );
       }
 
-      const applicationStartDate = dayjs(payload.applicationStartDate);
       const applicationEndDate = dayjs(payload.applicationEndDate);
-      const todayDate = dayjs().startOf("day");
+      const applicationStartDate = dayjs(payload.applicationStartDate);
+      const todayDate = dayjs();
+      const pastCurrentDate = dayjs().subtract(10, "day");
 
-      if (applicationStartDate.isBefore(todayDate)) {
-        throw new Error("Application start date cannot be in the past.");
+      if (
+        applicationStartDate.isBefore(todayDate, "day") &&
+        applicationStartDate.isBefore(pastCurrentDate, "day")
+      ) {
+        throw new Error(
+          "You're not allowed to create jobs with application start date older than 10 days from today.",
+        );
       }
 
       if (applicationEndDate.isBefore(applicationStartDate)) {
@@ -181,16 +198,23 @@ function useAddJob(onSuccess, open = false) {
     } finally {
       setIsSubmitting(false);
     }
-  }, [form, file, advFile, onSuccess, isSubmitting, reset, dispatch, showErrorMsg]);
+  }, [
+    form,
+    file,
+    advFile,
+    onSuccess,
+    isSubmitting,
+    reset,
+    dispatch,
+    showErrorMsg,
+  ]);
 
   const handleSaveAsDraft = useCallback(async () => {
     try {
       const startDateValid =
-        form.applicationStartDate &&
-        dayjs(form.applicationStartDate).isValid();
+        form.applicationStartDate && dayjs(form.applicationStartDate).isValid();
       const endDateValid =
-        form.applicationEndDate &&
-        dayjs(form.applicationEndDate).isValid();
+        form.applicationEndDate && dayjs(form.applicationEndDate).isValid();
 
       const payload = {
         title: form.title || "",

@@ -1,6 +1,5 @@
 import {
   DateRangeTwoTone,
-  Delete,
   Pause,
   PlayArrow,
   Sell,
@@ -12,10 +11,10 @@ import {
   IconButton,
   Paper,
   Tooltip,
+  Box,
 } from "@mui/material";
 import { useCallback, useMemo, useState } from "react";
 import useAppCss from "../useAppCss";
-import { Box } from "@mui/material";
 import Markdown from "react-markdown";
 import { manageJobState } from "../../services/JobService";
 import { toast } from "react-toastify";
@@ -204,13 +203,17 @@ export default function useMRTColDefsFactory() {
                       requestToggle(record.applicationId, !isActive)
                     }
                   >
-                    {isProcessing ? (
-                      <CircularProgress size={16} color="secondary" />
-                    ) : isActive ? (
-                      <Pause fontSize="small" color="success" />
-                    ) : (
-                      <PlayArrow fontSize="small" color="secondary" />
-                    )}
+                    {(() => {
+                      if (isProcessing) {
+                        return <CircularProgress size={16} color="secondary" />;
+                      }
+
+                      if (isActive) {
+                        return <Pause fontSize="small" color="success" />;
+                      }
+
+                      return <PlayArrow fontSize="small" color="secondary" />;
+                    })()}
                   </IconButton>
                 </span>
               </Tooltip>
@@ -226,12 +229,6 @@ export default function useMRTColDefsFactory() {
                   ) : (
                     <Visibility fontSize="small" />
                   )}
-                </IconButton>
-              </Tooltip>
-
-              <Tooltip title="Delete Job" arrow>
-                <IconButton color="error">
-                  <Delete fontSize="small" />
                 </IconButton>
               </Tooltip>
             </Paper>

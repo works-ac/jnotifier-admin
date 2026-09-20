@@ -7,16 +7,19 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Divider,
   IconButton,
   Paper,
   Typography,
 } from "@mui/material";
 import useAppCss from "../../hooks/useAppCss";
 import { BorderColor, Close, Save } from "@mui/icons-material";
+import { useSelector } from "react-redux";
 
 function MarkdownEditorModal({ onClose, onSubmitHandler, isOpen, name = "" }) {
   const { GlobalPaperCss, GlobalDialogTitle } = useAppCss();
-  const [value, setValue] = useState();
+  const { shortDescription } = useSelector((state) => state.job);
+  const [value, setValue] = useState(shortDescription || "");
 
   return (
     <Dialog open={isOpen} maxWidth="md" fullWidth>
@@ -68,6 +71,18 @@ function MarkdownEditorModal({ onClose, onSubmitHandler, isOpen, name = "" }) {
 
       <DialogContent>
         <Paper variant="elevation" elevation={2} sx={GlobalPaperCss}>
+          <Typography variant="h6" sx={{ mb: 2, textAlign: "justify" }}>
+            Info:- Please use the markdown editor to format your content. You
+            can use the toolbar above the editor to apply formatting, or you can
+            write markdown syntax directly in the editor. The preview will
+            update in real-time as you type. Use the full-screen mode (available
+            at topmost right corner of the editor) for a better editing
+            experience. Once you are done, click the "Save" button to save your
+            changes.
+          </Typography>
+
+          <Divider sx={{ mb: 1 }} />
+
           <MDEditor value={value} onChange={setValue} height={500} />
         </Paper>
       </DialogContent>

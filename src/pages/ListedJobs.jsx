@@ -56,6 +56,14 @@ function ListedJobs() {
     state: { isLoading, pagination },
   });
 
+  const pendingToggleStatusText = pendingToggle?.nextState
+    ? "active"
+    : "in-active";
+
+  const confirmStatusText = pendingToggle
+    ? `Are you sure you want to mark the job with application id "${pendingToggle.applicationId}" as ${pendingToggleStatusText}?`
+    : "";
+
   /** Called by AddJobModal on successful creation — reset to page 1 to reload */
   const handleAddSuccess = () => {
     setAddModalOpen(false);
@@ -110,11 +118,7 @@ function ListedJobs() {
         isLoading={isProcessing}
         Icon={SwapHoriz}
         heading="Confirm Status Change"
-        text={
-          pendingToggle
-            ? `Are you sure you want to mark the job with application id "${pendingToggle.applicationId}" as ${pendingToggle.nextState ? "active" : "in-active"}?`
-            : ""
-        }
+        text={confirmStatusText}
         onSuccess={confirmToggle}
         onCancel={cancelToggle}
       />

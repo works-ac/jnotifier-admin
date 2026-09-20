@@ -36,6 +36,7 @@ import FlexBox from "../styled/FlexBox";
 import MarkdownEditorModal from "./MarkdownEditorModal";
 import useAppMdEditor from "../../hooks/core/useAppMdEditor";
 import AppDialogTitle from "../core/AppDialogTitle";
+import { useSelector } from "react-redux";
 
 /**
  * AddJobModal — Dialog form to create a new job listing.
@@ -71,6 +72,7 @@ function AddJobModal({ open, onClose, onSuccess }) {
   const { handleMdEditorSubmitBtnClick, showMdEditor, handleMdEditorDialog } =
     useAppMdEditor(setForm);
   const { RequiredFieldCss } = useAppCss();
+  const { isDisabled } = useSelector((state) => state.file);
 
   const handleClose = () => {
     if (isSubmitting) return;
@@ -384,6 +386,7 @@ function AddJobModal({ open, onClose, onSuccess }) {
                     (.pdf — max 50 MB)
                   </Typography>
                 </Typography>
+
                 <FileUpload
                   accept=".pdf,application/pdf"
                   maxSizeMB={50}
@@ -442,7 +445,9 @@ function AddJobModal({ open, onClose, onSuccess }) {
               )
             }
             onClick={handleSubmit}
-            disabled={isSubmitting || form.shortDescription.length > 700}
+            disabled={
+              isSubmitting || isDisabled || form.shortDescription.length > 700
+            }
           >
             {isSubmitting ? "Saving…" : "Add Job"}
           </Button>
