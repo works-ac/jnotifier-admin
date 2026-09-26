@@ -31,3 +31,18 @@ if (regex.test(envContent)) {
 
 fs.writeFileSync(envPath, envContent);
 console.log(`✅ Updated .env variable ${versionKey} to ${newVersion}`);
+
+const dockerfilePath = path.resolve(__dirname, "../Dockerfile");
+if (fs.existsSync(dockerfilePath)) {
+  let dockerContent = fs.readFileSync(dockerfilePath, "utf8");
+  const dockerRegex = new RegExp(`^ARG\\s+${versionKey}(?:=.*)?$`, "m");
+
+  if (dockerRegex.test(dockerContent)) {
+    dockerContent = dockerContent.replace(
+      dockerRegex,
+      `ARG ${versionKey}=${newVersion}`
+    );
+    fs.writeFileSync(dockerfilePath, dockerContent);
+    console.log(`✅ Updated Dockerfile ARG ${versionKey} to ${newVersion}`);
+  }
+}
