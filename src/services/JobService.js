@@ -9,6 +9,13 @@ export async function createJob(payload) {
   );
 }
 
+export async function editJob(applicationId, payload) {
+  return await ApplicationApi.put(
+    ADMIN_SERVICE_BASE_URL + "applications/" + applicationId,
+    payload,
+  );
+}
+
 export async function manageJobState(applicationId, isActive) {
   return await ApplicationApi.patch(
     ADMIN_SERVICE_BASE_URL + "applications/" + applicationId + "/status",

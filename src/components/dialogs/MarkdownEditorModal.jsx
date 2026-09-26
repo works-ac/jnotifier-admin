@@ -31,6 +31,7 @@ function MarkdownEditorModal({ onClose, onSubmitHandler, isOpen, name = "" }) {
           alignItems: "start",
           py: 0,
           rowGap: 0,
+          bgcolor: "primary.main",
         }}
       >
         <Box

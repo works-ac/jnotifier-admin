@@ -20,6 +20,7 @@ import useMRTColDefsFactory from "../hooks/mrt/useMRTColDefsFactory";
 import AddJobModal from "../components/dialogs/AddJobModal";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import ViewJobModal from "../components/dialogs/ViewJobModal";
+import EditJobModal from "../components/dialogs/EditJobModal";
 
 function ListedJobs() {
   const theme = useTheme();
@@ -39,10 +40,12 @@ function ListedJobs() {
     cancelToggle,
     confirmToggle,
     setShowViewDialog,
+    setShowEditDialog,
     pendingToggle,
     isProcessing,
     jobDetails,
     showViewDialog,
+    showEditDialog,
   } = useMRTColDefsFactory();
 
   const table = useMaterialReactTable({
@@ -67,6 +70,11 @@ function ListedJobs() {
   /** Called by AddJobModal on successful creation — reset to page 1 to reload */
   const handleAddSuccess = () => {
     setAddModalOpen(false);
+    setPagination({ pageIndex: 0, pageSize: pagination.pageSize });
+  };
+
+  const handleEditSuccess = () => {
+    setShowEditDialog(false);
     setPagination({ pageIndex: 0, pageSize: pagination.pageSize });
   };
 
@@ -134,6 +142,15 @@ function ListedJobs() {
           isOpen={showViewDialog}
           jobDetails={jobDetails}
           onClose={() => setShowViewDialog(false)}
+        />
+      )}
+
+      {showEditDialog && (
+        <EditJobModal
+          open={showEditDialog}
+          onClose={() => setShowEditDialog(false)}
+          onSuccess={handleEditSuccess}
+          applicationDetails={jobDetails}
         />
       )}
     </Container>

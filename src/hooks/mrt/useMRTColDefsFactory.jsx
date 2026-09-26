@@ -1,5 +1,7 @@
 import {
   DateRangeTwoTone,
+  Edit,
+  OpenInNew,
   Pause,
   PlayArrow,
   Sell,
@@ -26,6 +28,7 @@ export default function useMRTColDefsFactory() {
   const { GlobalChipCss } = useAppCss();
   const [isProcessing, setIsProcessing] = useState(false);
   const [showViewDialog, setShowViewDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
   const [jobDetails, setJobDetails] = useState(null);
   const { isLoading } = useViews("/jobs");
 
@@ -71,6 +74,13 @@ export default function useMRTColDefsFactory() {
 
     setJobDetails(rowData);
     setShowViewDialog(true);
+  }, []);
+
+  const handleEditBtn = useCallback(async function (rowData) {
+    if (!rowData) return;
+
+    setJobDetails(rowData);
+    setShowEditDialog(true);
   }, []);
 
   // ── Column definitions ───────────────────────────────────────────────────
@@ -218,6 +228,20 @@ export default function useMRTColDefsFactory() {
                 </span>
               </Tooltip>
 
+              <Tooltip title="Edit" arrow>
+                <IconButton
+                  color="warning"
+                  onClick={() => handleEditBtn(row?.original)}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <CircularProgress size={16} color="secondary" />
+                  ) : (
+                    <Edit fontSize="small" />
+                  )}
+                </IconButton>
+              </Tooltip>
+
               <Tooltip title="Views" arrow>
                 <IconButton
                   color="primary"
@@ -229,6 +253,17 @@ export default function useMRTColDefsFactory() {
                   ) : (
                     <Visibility fontSize="small" />
                   )}
+                </IconButton>
+              </Tooltip>
+
+              <Tooltip title="View job" arrow>
+                <IconButton
+                  color="primary"
+                  onClick={() =>
+                    globalThis.open(row?.original?.applyLink, "_blank")
+                  }
+                >
+                  <OpenInNew fontSize="small" />
                 </IconButton>
               </Tooltip>
             </Paper>
@@ -245,8 +280,10 @@ export default function useMRTColDefsFactory() {
     cancelToggle,
     confirmToggle,
     setShowViewDialog,
+    setShowEditDialog,
     isProcessing,
     showViewDialog,
+    showEditDialog,
     jobDetails,
   };
 }

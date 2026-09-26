@@ -5,7 +5,7 @@ import FlexBox from "../styled/FlexBox";
 import { Close } from "@mui/icons-material";
 import PropTypes from "prop-types";
 
-function AppDialogTitle({ title, onClose, Icon }) {
+function AppDialogTitle({ title, onClose, Icon, bgColor = "primary.main" }) {
   const { GlobalDialogTitle } = useAppCss();
   return (
     <Box
@@ -13,6 +13,7 @@ function AppDialogTitle({ title, onClose, Icon }) {
       sx={{
         ...GlobalDialogTitle,
         flexDirection: "column",
+        bgcolor: bgColor,
         alignItems: "start",
         justifyContent: "center",
         py: 0,
@@ -60,6 +61,7 @@ AppDialogTitle.propTypes = {
   title: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
   Icon: PropTypes.elementType,
+  bgColor: PropTypes.string,
 };
 
 export default React.memo(AppDialogTitle);

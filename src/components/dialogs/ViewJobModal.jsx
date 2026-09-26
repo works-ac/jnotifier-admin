@@ -22,9 +22,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle,
   Divider,
-  IconButton,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -40,15 +38,12 @@ import remarkGfm from "remark-gfm";
 import dayjs from "dayjs";
 import useViewJobModal from "../../hooks/dialogs/useViewJobModal";
 import ShareDialog from "../core/ShareDialog";
+import AppDialogTitle from "../core/AppDialogTitle";
 
 function ViewJobModal({ isOpen = false, onClose = () => {}, jobDetails = {} }) {
   const theme = useTheme();
-  const {
-    GlobalDialogTitle,
-    GlobalNormalChipCss,
-    GlobalChipCss,
-    GlobalAccordianCss,
-  } = useAppCss();
+  const { GlobalNormalChipCss, GlobalChipCss, GlobalAccordianCss } =
+    useAppCss();
   const {
     isLoading,
     isRefreshing,
@@ -93,51 +88,11 @@ function ViewJobModal({ isOpen = false, onClose = () => {}, jobDetails = {} }) {
   return (
     <>
       <Dialog maxWidth="lg" fullWidth open={isOpen}>
-        <Box
-          sx={{
-            ...GlobalDialogTitle,
-            justifyContent: "center",
-            flexDirection: "column",
-            alignItems: "start",
-            py: 0,
-            rowGap: 0,
-          }}
-        >
-          <Box
-            component="div"
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "flex-end",
-              width: "100%",
-              p: 1,
-            }}
-          >
-            <IconButton
-              onClick={onClose}
-              sx={(theme) => ({
-                color: "white",
-                borderRadius: 2,
-                "&:hover": {
-                  color: "white",
-                  backgroundColor: theme.palette.error.main,
-                },
-              })}
-            >
-              <Close fontSize="medium" />
-            </IconButton>
-          </Box>
-
-          <DialogTitle sx={{ display: "flex", gap: 1 }}>
-            <Visibility fontSize="small" />
-            <Typography
-              variant="h6"
-              sx={{ fontWeight: 700, fontFamily: "Roboto" }}
-            >
-              Notice Details
-            </Typography>
-          </DialogTitle>
-        </Box>
+        <AppDialogTitle
+          Icon={<Visibility fontSize="small" />}
+          title="View details"
+          onClose={onClose}
+        />
 
         <DialogContent sx={{ mt: 2 }}>
           <Box
