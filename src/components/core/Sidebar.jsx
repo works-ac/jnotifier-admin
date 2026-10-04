@@ -14,6 +14,7 @@ import NavItem from "./NavItem";
 import NavGroup from "./NavGroup";
 import { SidebarNavData } from "../../data/SidebarData";
 import { getRoleName } from "../../helpers";
+import NavbarLogo from "./NavbarLogo";
 
 const DRAWER_EXPANDED_WIDTH = 240;
 const DRAWER_COLLAPSED_WIDTH = 64;
@@ -113,16 +114,8 @@ function Sidebar({ expanded, onToggle }) {
                 width: "100%",
               }}
             >
-              <Box
-                component="img"
-                src="/logo.png"
-                sx={{
-                  width: 36,
-                  height: 36,
-                  objectFit: "contain",
-                  borderRadius: "50%",
-                }}
-              />
+              <NavbarLogo src="/logo.png" alt="Job Notifier Logo" />
+
               <Typography
                 variant="subtitle1"
                 sx={{ fontWeight: 700, lineHeight: 1.2, whiteSpace: "nowrap" }}
@@ -144,16 +137,7 @@ function Sidebar({ expanded, onToggle }) {
           ) : (
             /* Collapsed: clicking the logo expands the sidebar */
             <IconButton onClick={onToggle} aria-label="Expand sidebar">
-              <Box
-                component="img"
-                src="/logo.png"
-                sx={{
-                  width: 48,
-                  height: 48,
-                  objectFit: "contain",
-                  borderRadius: "50%",
-                }}
-              />
+              <NavbarLogo src="/logo.png" alt="Job Notifier Logo" height={40} />
             </IconButton>
           )}
         </Box>
