@@ -21,7 +21,7 @@ Write-Output "=============================================="
 Write-Output "Logging into docker registry, please wait..."
 Write-Output "=============================================="
 
-$loginStatus = docker login | findstr "Login Succeeded"
+$loginStatus = docker login | grep "Login Succeeded"
 
 if ($loginStatus -ne "Login Succeeded") {
   $branch = Read-Host "Enter the branch name"
