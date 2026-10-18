@@ -18,7 +18,7 @@ import useAddNoticeAlert from "../../hooks/dialogs/useAddNoticeAlert";
 import TagsInput from "../core/TagsInput";
 import useTagsInput from "../../hooks/core/useTagsInput";
 import FileUpload from "../core/FileUpload";
-import { Add, Close, OpenInNew } from "@mui/icons-material";
+import { Add, Close, Drafts, OpenInNew } from "@mui/icons-material";
 import AppAlert from "../AppAlert";
 import Notes from "../../components/Notes";
 import useAppCss from "../../hooks/useAppCss";
@@ -37,23 +37,31 @@ function AddNoticeAlert({ onClose, onSuccess, isOpen }) {
     handleAdd,
     handleAlertOnClose,
     isSubmitting,
-  } = useAddNoticeAlert();
+    handleSaveAsDraft,
+    resetForm,
+  } = useAddNoticeAlert(isOpen);
   const { handleAddTag, handleRemoveTag } = useTagsInput(setForm);
   const { RequiredFieldCss } = useAppCss();
   const { showMdEditor, handleMdEditorDialog, handleMdEditorSubmitBtnClick } =
     useAppMdEditor(setForm);
+
+  const handleClose = useCallback(() => {
+    if (isSubmitting) return;
+    resetForm();
+    onClose();
+  }, [isSubmitting, resetForm, onClose]);
 
   const handleAddBtnClick = useCallback(
     async function (e) {
       e.preventDefault();
       await handleAdd(onSuccess, onClose);
     },
-    [handleAdd],
+    [handleAdd, onSuccess, onClose],
   );
 
   return (
     <>
-      <Dialog open={isOpen} maxWidth="lg" fullWidth>
+      <Dialog open={isOpen} onClose={handleClose} maxWidth="lg" fullWidth>
         <DialogTitle
           sx={{
             display: "flex",
@@ -170,14 +178,25 @@ function AddNoticeAlert({ onClose, onSuccess, isOpen }) {
           </Box>
         </DialogContent>
 
-        <DialogActions>
+        <DialogActions sx={{ px: 3, py: 2, gap: 1 }}>
           <Button
             variant="text"
             color="error"
-            onClick={onClose}
+            onClick={handleClose}
             startIcon={<Close fontSize="small" />}
+            disabled={isSubmitting}
           >
             Close
+          </Button>
+
+          <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<Drafts fontSize="small" />}
+            onClick={handleSaveAsDraft}
+            disabled={isSubmitting}
+          >
+            Save as Draft
           </Button>
 
           <Button
@@ -185,7 +204,7 @@ function AddNoticeAlert({ onClose, onSuccess, isOpen }) {
             color="success"
             startIcon={
               isSubmitting ? (
-                <CircularProgress size={16} color="secondary" />
+                <CircularProgress size={16} color="inherit" />
               ) : (
                 <Add fontSize="small" />
               )
@@ -193,7 +212,7 @@ function AddNoticeAlert({ onClose, onSuccess, isOpen }) {
             disabled={isSubmitting || form.noticeDesc.length > 2500}
             onClick={handleAddBtnClick}
           >
-            Add
+            {isSubmitting ? "Adding…" : "Add"}
           </Button>
         </DialogActions>
       </Dialog>
@@ -202,6 +221,7 @@ function AddNoticeAlert({ onClose, onSuccess, isOpen }) {
         <MarkdownEditorModal
           isOpen={showMdEditor}
           name="noticeDesc"
+          initialValue={form.noticeDesc}
           onClose={handleMdEditorDialog}
           onSubmitHandler={handleMdEditorSubmitBtnClick}
         />

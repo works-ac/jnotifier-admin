@@ -8,7 +8,7 @@ function useAppMdEditor(setForm) {
   }, []);
 
   const handleMdEditorSubmitBtnClick = useCallback(function (value, name) {
-    if (!name || !value) return;
+    if (!name || value === undefined || value === null) return;
 
     setForm((prev) => ({ ...prev, [name]: value }));
     handleMdEditorDialog();

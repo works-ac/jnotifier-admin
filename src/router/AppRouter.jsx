@@ -17,6 +17,8 @@ import UserMgmtPage from "../pages/sa/UserMgmtPage";
 import UtilitiesPage from "../pages/admin/UtilitiesPage";
 import HelpCentrePage from "../pages/HelpCentrePage";
 import ErrorPage from "../pages/core/ErrorPage";
+import TermsPage from "../pages/TermsPage";
+import PrivacyPolicyPage from "../pages/PrivacyPolicyPage";
 
 /**
  * Route structure:
@@ -90,6 +92,14 @@ const AppRoutes = createBrowserRouter([
       {
         path: "recover/account",
         element: <RecoverAccountPage />,
+      },
+      {
+        path: "terms",
+        element: <TermsPage />,
+      },
+      {
+        path: "privacy",
+        element: <PrivacyPolicyPage />,
       },
       {
         path: "medias",

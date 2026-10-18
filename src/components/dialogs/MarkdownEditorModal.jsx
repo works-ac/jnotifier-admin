@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import {
   Box,
@@ -16,10 +16,24 @@ import useAppCss from "../../hooks/useAppCss";
 import { BorderColor, Close, Save } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 
-function MarkdownEditorModal({ onClose, onSubmitHandler, isOpen, name = "" }) {
+function MarkdownEditorModal({
+  onClose,
+  onSubmitHandler,
+  isOpen,
+  name = "",
+  initialValue,
+}) {
   const { GlobalPaperCss, GlobalDialogTitle } = useAppCss();
   const { shortDescription } = useSelector((state) => state.job);
-  const [value, setValue] = useState(shortDescription || "");
+  const [value, setValue] = useState(
+    initialValue !== undefined ? initialValue : shortDescription || "",
+  );
+
+  useEffect(() => {
+    if (initialValue !== undefined) {
+      setValue(initialValue || "");
+    }
+  }, [initialValue]);
 
   return (
     <Dialog open={isOpen} maxWidth="md" fullWidth>

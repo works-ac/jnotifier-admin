@@ -4,13 +4,17 @@ import {
   AccordionDetails,
   AccordionSummary,
   Avatar,
+  Badge,
   Box,
   Button,
+  CircularProgress,
   Container,
   Divider,
+  IconButton,
   InputAdornment,
   Paper,
   TextField,
+  Tooltip,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -23,10 +27,14 @@ import { AppConstants } from "../app/AppConstants";
 import Login from "../views/Login";
 import {
   AlternateEmail,
+  Business,
   Cake,
+  CameraAlt,
   Category,
+  Delete,
   Edit,
   ExpandMore,
+  LocationOn,
   Logout,
   Male,
   Person,
@@ -35,9 +43,14 @@ import { getInitials } from "../helpers";
 import Heading from "../components/Heading";
 import Notes from "../components/Notes";
 import ConfirmationDialog from "../components/ConfirmationDialog";
+import EditAccount from "../components/dialogs/EditAccount";
 
 function AccountsPage() {
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [photoUploadDialogOpen, setPhotoUploadDialogOpen] = useState(false);
+  const [photoDeleteDialogOpen, setPhotoDeleteDialogOpen] = useState(false);
+  const [pendingPhotoFile, setPendingPhotoFile] = useState(null);
   const theme = useTheme();
   const {
     alert,
@@ -47,9 +60,28 @@ function AccountsPage() {
     profile,
     handleLogout,
     isLoggingOut,
+    loadProfile,
+    isUploadingPhoto,
+    isDeletingPhoto,
+    handleUploadPhoto,
+    handleDeletePhoto,
   } = useAccounts();
   const { GlobalPaperCss, GlobalAccordianCss } = useAppCss();
   const { userAuthStatus } = useSelector((state) => state.auth);
+
+  const onPhotoSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = null;
+
+    if (file.size > 1024 * 1024) {
+      handleUploadPhoto(file);
+      return;
+    }
+
+    setPendingPhotoFile(file);
+    setPhotoUploadDialogOpen(true);
+  };
 
   if (isLoading)
     return (
@@ -100,19 +132,79 @@ function AccountsPage() {
                   flexDirection: "column",
                 }}
               >
-                <Avatar
-                  sx={(theme) => ({
-                    backgroundColor: theme.palette.warning.main,
-                    p: 5,
-                    my: 2,
-                    fontWeight: 700,
-                    fontSize: "2rem",
-                  })}
+                <Badge
+                  overlap="circular"
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  badgeContent={
+                    <Tooltip title="Upload Profile Picture (Max 1MB)">
+                      <IconButton
+                        size="small"
+                        component="label"
+                        sx={(theme) => ({
+                          backgroundColor: theme.palette.primary.main,
+                          color: "#fff",
+                          boxShadow: 2,
+                          "&:hover": {
+                            backgroundColor: theme.palette.primary.dark,
+                          },
+                          width: 38,
+                          height: 38,
+                        })}
+                        disabled={isUploadingPhoto || isDeletingPhoto}
+                      >
+                        {isUploadingPhoto ? (
+                          <CircularProgress size={18} color="inherit" />
+                        ) : (
+                          <CameraAlt fontSize="small" />
+                        )}
+                        <input
+                          type="file"
+                          hidden
+                          accept="image/jpeg,image/png,image/webp"
+                          onChange={onPhotoSelect}
+                        />
+                      </IconButton>
+                    </Tooltip>
+                  }
                 >
-                  {getInitials(profile.fullName)}
-                </Avatar>
+                  <Avatar
+                    src={profile?.profilePicture}
+                    sx={(theme) => ({
+                      backgroundColor: theme.palette.warning.main,
+                      width: 110,
+                      height: 110,
+                      my: 1,
+                      fontWeight: 700,
+                      fontSize: "2.5rem",
+                      boxShadow: 2,
+                      border: `3px solid ${theme.palette.background.paper}`,
+                    })}
+                  >
+                    {getInitials(profile.fullName)}
+                  </Avatar>
+                </Badge>
 
-                <Typography variant="h3" sx={{ fontWeight: 700, mb: 2 }}>
+                {profile?.profilePicture && (
+                  <Button
+                    variant="text"
+                    color="error"
+                    size="small"
+                    startIcon={
+                      isDeletingPhoto ? (
+                        <CircularProgress size={14} color="inherit" />
+                      ) : (
+                        <Delete fontSize="small" />
+                      )
+                    }
+                    disabled={isDeletingPhoto || isUploadingPhoto}
+                    onClick={() => setPhotoDeleteDialogOpen(true)}
+                    sx={{ mt: 0.5, textTransform: "none", fontSize: "0.85rem" }}
+                  >
+                    Remove Photo
+                  </Button>
+                )}
+
+                <Typography variant="h3" sx={{ fontWeight: 700, mb: 2, mt: 1 }}>
                   {profile?.fullName?.toWellFormed()?.toUpperCase() ?? ""}
                 </Typography>
               </Box>
@@ -275,6 +367,70 @@ function AccountsPage() {
                   )}
                 </AccordionDetails>
               </Accordion>
+
+              <Accordion sx={GlobalAccordianCss}>
+                <AccordionSummary
+                  aria-controls="company-info-content"
+                  id="company-info-header"
+                  expandIcon={<ExpandMore fontSize="small" />}
+                >
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      textTransform: "uppercase",
+                      fontWeight: 700,
+                      color: theme.palette.primary.A700,
+                    }}
+                  >
+                    Company Details
+                  </Typography>
+                </AccordionSummary>
+
+                <AccordionDetails>
+                  <TextField
+                    value={profile?.companyName || ""}
+                    disabled
+                    fullWidth
+                    slotProps={{
+                      input: {
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Business
+                              fontSize="small"
+                              color="secondary"
+                              sx={{ mr: 1 }}
+                            />
+                          </InputAdornment>
+                        ),
+                      },
+                    }}
+                    sx={{ mb: 2 }}
+                    label="Company Name"
+                  />
+
+                  <TextField
+                    value={profile?.address || ""}
+                    disabled
+                    fullWidth
+                    multiline
+                    slotProps={{
+                      input: {
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <LocationOn
+                              fontSize="small"
+                              color="secondary"
+                              sx={{ mr: 1 }}
+                            />
+                          </InputAdornment>
+                        ),
+                      },
+                    }}
+                    sx={{ mb: 2 }}
+                    label="Company Address"
+                  />
+                </AccordionDetails>
+              </Accordion>
             </Box>
 
             <Notes
@@ -305,7 +461,7 @@ function AccountsPage() {
                 variant="contained"
                 color="success"
                 startIcon={<Edit fontSize="small" />}
-                disabled
+                onClick={() => setEditDialogOpen(true)}
               >
                 Edit
               </Button>
@@ -336,6 +492,47 @@ function AccountsPage() {
         }}
         onCancel={() => setLogoutDialogOpen(false)}
       />
+
+      <ConfirmationDialog
+        open={photoUploadDialogOpen}
+        heading="Upload Profile Picture"
+        Icon={CameraAlt}
+        text={`Are you sure you want to upload this profile picture (${pendingPhotoFile ? (pendingPhotoFile.size / 1024).toFixed(1) : 0} KB)? It will be encrypted before storage.`}
+        isLoading={isUploadingPhoto}
+        onSuccess={async () => {
+          setPhotoUploadDialogOpen(false);
+          if (pendingPhotoFile) {
+            await handleUploadPhoto(pendingPhotoFile);
+            setPendingPhotoFile(null);
+          }
+        }}
+        onCancel={() => {
+          setPhotoUploadDialogOpen(false);
+          setPendingPhotoFile(null);
+        }}
+      />
+
+      <ConfirmationDialog
+        open={photoDeleteDialogOpen}
+        heading="Remove Profile Picture"
+        Icon={Delete}
+        text="Are you sure you want to remove your profile picture?"
+        isLoading={isDeletingPhoto}
+        onSuccess={async () => {
+          setPhotoDeleteDialogOpen(false);
+          await handleDeletePhoto();
+        }}
+        onCancel={() => setPhotoDeleteDialogOpen(false)}
+      />
+
+      {editDialogOpen && (
+        <EditAccount
+          isOpen={editDialogOpen}
+          onClose={() => setEditDialogOpen(false)}
+          onSuccess={loadProfile}
+          profile={profile}
+        />
+      )}
     </Container>
   );
 }

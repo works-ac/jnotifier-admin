@@ -8,6 +8,7 @@ import {
   TextField,
   useTheme,
   CircularProgress,
+  InputAdornment
 } from "@mui/material";
 import {
   AlternateEmail,
@@ -16,7 +17,6 @@ import {
   Visibility,
   VisibilityOff,
 } from "@mui/icons-material";
-import { InputAdornment } from "@mui/material";
 import useAppCss from "../hooks/useAppCss";
 import Heading from "../components/Heading";
 import OTPVerification from "../components/OTPVerification";

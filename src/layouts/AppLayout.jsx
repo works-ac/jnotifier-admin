@@ -3,6 +3,8 @@ import { Outlet } from "react-router-dom";
 import { Box } from "@mui/material";
 import { useSelector } from "react-redux";
 import Sidebar from "../components/core/Sidebar";
+import Appbar from "../components/Appbar";
+import Footer from "../components/core/Footer";
 import { AppConstants } from "../app/AppConstants";
 
 /**
@@ -10,11 +12,13 @@ import { AppConstants } from "../app/AppConstants";
  *
  * Responsibilities:
  *   - Render the collapsible left-side Sidebar ONLY when the user is authenticated.
+ *   - Render the top Appbar ONLY when the user is authenticated.
  *   - Render the Outlet (page content) in the remaining space.
+ *   - Render the Footer below the Outlet.
  *
  * Authentication is handled at the route level in AppRouter via
  * <CheckAuthStatus> wrappers — NOT here. AppLayout merely reads the
- * already-resolved auth status from Redux to decide sidebar visibility.
+ * already-resolved auth status from Redux to decide sidebar & appbar visibility.
  */
 export default function AppLayout() {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
@@ -45,7 +49,14 @@ export default function AppLayout() {
           bgcolor: "background.default",
         }}
       >
-        <Outlet />
+        {/* Top Appbar for authenticated users */}
+        {isAuthenticated && <Appbar />}
+        
+        <Box sx={{ flexGrow: 1 }}>
+          <Outlet />
+        </Box>
+
+        <Footer />
       </Box>
     </Box>
   );

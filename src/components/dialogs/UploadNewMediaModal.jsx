@@ -8,22 +8,27 @@ import {
   DialogTitle,
   Divider,
   IconButton,
+  InputAdornment,
+  TextField,
   Typography,
   useTheme,
 } from "@mui/material";
 import React from "react";
 import useAppCss from "../../hooks/useAppCss";
-import { Close, UploadFile } from "@mui/icons-material";
+import { Close, Security, UploadFile } from "@mui/icons-material";
 import useUploadNewMediaModal from "../../hooks/dialogs/useUploadNewMediaModal";
 import FileUpload from "../core/FileUpload";
+import Captcha from "../Captcha";
 import AppAlert from "../AppAlert";
 import Notes from "../Notes";
 
 function UploadNewMediaModal({ onClose, isOpen = false, onSuccess }) {
   const theme = useTheme();
-  const { GlobalDialogTitle } = useAppCss();
+  const { GlobalDialogTitle, RequiredFieldCss } = useAppCss();
   const {
     setFile,
+    captcha,
+    handleCaptchaChange,
     alert,
     handleAlertOnClose,
     handleNewFileUploadBtn,
@@ -109,9 +114,57 @@ function UploadNewMediaModal({ onClose, isOpen = false, onSuccess }) {
           disabled={isLoading}
         />
 
-        <Box component="div" sx={{ mt: 1 }}>
+        {/* Captcha verification */}
+        <Box
+          component="div"
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 1.5,
+            mt: 2.5,
+          }}
+        >
+          <Box
+            component="div"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            <Captcha />
+          </Box>
+
+          <TextField
+            label="Captcha Code"
+            name="captcha"
+            placeholder="Ex:- edh26w"
+            value={captcha}
+            onChange={handleCaptchaChange}
+            fullWidth
+            required
+            disabled={isLoading}
+            sx={RequiredFieldCss}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Security fontSize="small" color="primary" />
+                  </InputAdornment>
+                ),
+              },
+            }}
+            helperText="Please enter the captcha characters shown above."
+          />
+        </Box>
+
+        <Box component="div" sx={{ mt: 1.5 }}>
           <Notes
             note="Only PDF and image files are supported."
+            noteColor={theme.palette.secondary.main}
+          />
+          <Notes
+            note="Fields marked with asterisk (*) are mandatory to fill."
             noteColor={theme.palette.secondary.main}
           />
         </Box>

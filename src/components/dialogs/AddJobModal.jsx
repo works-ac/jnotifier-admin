@@ -467,6 +467,7 @@ function AddJobModal({ open, onClose, onSuccess }) {
           onClose={handleMdEditorDialog}
           onSubmitHandler={handleMdEditorSubmitBtnClick}
           name="shortDescription"
+          initialValue={form.shortDescription}
         />
       )}
     </>

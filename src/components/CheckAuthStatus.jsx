@@ -7,7 +7,7 @@ import CircluarProgressLoader from "./CircluarProgressLoader";
 import AppAlert from "./AppAlert";
 import { AppConstants } from "../app/AppConstants";
 
-const PUBLIC_PATHS = ["/account", "/recover/account", "/register"];
+const PUBLIC_PATHS = ["/account", "/recover/account", "/register", "/terms", "/privacy"];
 
 function CheckAuthStatus({ children }) {
   const { alert, checkUserAuthStatus, handleAlertOnClose, isLoading } =

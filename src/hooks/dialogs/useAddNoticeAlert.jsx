@@ -1,27 +1,84 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { AddNoticeAlertData } from "../../data/AddNoticeListing";
 import useAppAlert from "../useAppAlert";
 import { addNotice } from "../../services/NoticeService";
 import { AddJobAlertSchema } from "../../data/schema/AddJobAlertSchema";
 import { showZodValidationError } from "../../helpers";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  clearNotice,
+  saveNotice,
+  saveNoticeDescription,
+} from "../../redux/slices/NoticeSlice";
 
-function useAddNoticeAlert() {
+function useAddNoticeAlert(isOpen = false) {
   const [form, setForm] = useState(AddNoticeAlertData);
   const [noticeAdvFile, setNoticeAdvFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { alert, handleAlertOnClose, reset, showErrorMsg } = useAppAlert();
+  const { alert, setAlert, handleAlertOnClose, reset, showErrorMsg } =
+    useAppAlert();
+  const dispatch = useDispatch();
+  const draftNotice = useSelector((state) => state.notice);
+
+  useEffect(() => {
+    if (isOpen && draftNotice) {
+      const hasDraft =
+        Boolean(draftNotice.noticeTitle) ||
+        Boolean(draftNotice.noticeDesc) ||
+        (Array.isArray(draftNotice.tags) && draftNotice.tags.length > 0);
+
+      if (hasDraft) {
+        setForm((prev) => ({
+          ...prev,
+          noticeTitle: draftNotice.noticeTitle || "",
+          noticeDesc: draftNotice.noticeDesc || "",
+          tags: Array.isArray(draftNotice.tags) ? draftNotice.tags : [],
+        }));
+      }
+    }
+  }, [isOpen]);
 
   const handleTextboxOnChange = useCallback(
     function (e) {
       const { name, value } = e.target;
 
-      setForm({
-        ...form,
+      if (name === "noticeDesc") {
+        dispatch(saveNoticeDescription({ noticeDesc: value }));
+      }
+
+      setForm((prev) => ({
+        ...prev,
         [name]: value,
-      });
+      }));
     },
-    [form],
+    [dispatch],
   );
+
+  const handleSaveAsDraft = useCallback(async () => {
+    try {
+      const payload = {
+        noticeTitle: form.noticeTitle || "",
+        noticeDesc: form.noticeDesc || "",
+        tags: form.tags || [],
+      };
+
+      dispatch(saveNotice(payload));
+      setAlert({
+        isOpen: true,
+        message: "Notice saved as draft successfully!",
+        type: "success",
+      });
+    } catch (error) {
+      console.error("Error saving notice as draft:", error);
+      showErrorMsg(error);
+    }
+  }, [form, dispatch, setAlert, showErrorMsg]);
+
+  const resetForm = useCallback(() => {
+    setForm(AddNoticeAlertData);
+    setNoticeAdvFile(null);
+    reset();
+  }, [reset]);
 
   const handleAdd = useCallback(
     async function (successCallback, closeCallback) {
@@ -61,6 +118,9 @@ function useAddNoticeAlert() {
         }
 
         await addNotice(formData);
+        setForm(AddNoticeAlertData);
+        setNoticeAdvFile(null);
+        dispatch(clearNotice());
         successCallback();
         closeCallback();
       } catch (error) {
@@ -69,7 +129,7 @@ function useAddNoticeAlert() {
         setIsSubmitting(false);
       }
     },
-    [form, noticeAdvFile],
+    [form, noticeAdvFile, isSubmitting, reset, dispatch, showErrorMsg],
   );
 
   return {
@@ -82,6 +142,8 @@ function useAddNoticeAlert() {
     isSubmitting,
     alert,
     handleAlertOnClose,
+    handleSaveAsDraft,
+    resetForm,
   };
 }
 

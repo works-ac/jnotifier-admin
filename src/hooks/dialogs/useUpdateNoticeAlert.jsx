@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import useAppAlert from "../useAppAlert";
 import { updateNotice } from "../../services/NoticeService";
+import { useDispatch } from "react-redux";
+import {
+  clearNotice,
+  saveNotice,
+  saveNoticeDescription,
+} from "../../redux/slices/NoticeSlice";
 
 /**
  * useUpdateNoticeAlert
@@ -19,7 +25,9 @@ function useUpdateNoticeAlert(noticeDetails) {
     tags: [],
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { alert, handleAlertOnClose, reset, showErrorMsg } = useAppAlert();
+  const { alert, setAlert, handleAlertOnClose, reset, showErrorMsg } =
+    useAppAlert();
+  const dispatch = useDispatch();
 
   // Seed form whenever the selected row changes
   useEffect(() => {
@@ -46,10 +54,33 @@ function useUpdateNoticeAlert(noticeDetails) {
   const handleTextboxOnChange = useCallback(
     function (e) {
       const { name, value } = e.target;
+      if (name === "noticeDesc") {
+        dispatch(saveNoticeDescription({ noticeDesc: value }));
+      }
       setForm((prev) => ({ ...prev, [name]: value }));
     },
-    [],
+    [dispatch],
   );
+
+  const handleSaveAsDraft = useCallback(async () => {
+    try {
+      const payload = {
+        noticeTitle: form.noticeTitle || "",
+        noticeDesc: form.noticeDesc || "",
+        tags: form.tags || [],
+      };
+
+      dispatch(saveNotice(payload));
+      setAlert({
+        isOpen: true,
+        message: "Notice saved as draft successfully!",
+        type: "success",
+      });
+    } catch (error) {
+      console.error("Error saving notice as draft:", error);
+      showErrorMsg(error);
+    }
+  }, [form, dispatch, setAlert, showErrorMsg]);
 
   /**
    * handleUpdate — builds FormData and calls the updateNotice API.
@@ -73,6 +104,8 @@ function useUpdateNoticeAlert(noticeDetails) {
 
         await updateNotice(formData);
 
+        dispatch(clearNotice());
+
         if (typeof successCallback === "function") successCallback();
         if (typeof closeCallback === "function") closeCallback();
       } catch (error) {
@@ -81,7 +114,7 @@ function useUpdateNoticeAlert(noticeDetails) {
         setIsSubmitting(false);
       }
     },
-    [form, noticeDetails, isSubmitting],
+    [form, noticeDetails, isSubmitting, reset, dispatch, showErrorMsg],
   );
 
   return {
@@ -89,6 +122,7 @@ function useUpdateNoticeAlert(noticeDetails) {
     setForm,
     handleTextboxOnChange,
     handleUpdate,
+    handleSaveAsDraft,
     isSubmitting,
     alert,
     handleAlertOnClose,

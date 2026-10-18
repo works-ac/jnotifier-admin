@@ -12,7 +12,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { Close, Edit, QuestionMark } from "@mui/icons-material";
+import { Close, Drafts, Edit, OpenInNew, QuestionMark } from "@mui/icons-material";
 import NotificationImportantIcon from "@mui/icons-material/NotificationImportant";
 import React, { useCallback, useState } from "react";
 import PropTypes from "prop-types";
@@ -24,6 +24,8 @@ import Notes from "../Notes";
 import useAppCss from "../../hooks/useAppCss";
 import ConfirmationDialog from "../ConfirmationDialog";
 import FlexBox from "../styled/FlexBox";
+import useAppMdEditor from "../../hooks/core/useAppMdEditor";
+import MarkdownEditorModal from "./MarkdownEditorModal";
 
 /**
  * UpdateNoticeAlertModal
@@ -46,12 +48,15 @@ function UpdateNoticeAlertModal({ isOpen, onClose, onSuccess, noticeDetails }) {
     setForm,
     handleTextboxOnChange,
     handleUpdate,
+    handleSaveAsDraft,
     isSubmitting,
     alert,
     handleAlertOnClose,
   } = useUpdateNoticeAlert(noticeDetails);
 
   const { handleAddTag, handleRemoveTag } = useTagsInput(setForm);
+  const { showMdEditor, handleMdEditorDialog, handleMdEditorSubmitBtnClick } =
+    useAppMdEditor(setForm);
 
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -184,6 +189,18 @@ function UpdateNoticeAlertModal({ isOpen, onClose, onSuccess, noticeDetails }) {
               />
             ))}
 
+            <FlexBox sx={{ my: 1, justifyContent: "flex-end" }}>
+              <Button
+                variant="outlined"
+                size="small"
+                startIcon={<OpenInNew fontSize="small" />}
+                onClick={handleMdEditorDialog}
+                disabled={isSubmitting || (form.noticeDesc && form.noticeDesc.length > 2500)}
+              >
+                Open Editor
+              </Button>
+            </FlexBox>
+
             <TagsInput
               tags={form.tags}
               onAddTag={handleAddTag}
@@ -209,7 +226,17 @@ function UpdateNoticeAlertModal({ isOpen, onClose, onSuccess, noticeDetails }) {
         <Divider />
 
         {/* ── Actions ── */}
-        <DialogActions sx={{ px: 3, py: 2 }}>
+        <DialogActions sx={{ px: 3, py: 2, gap: 1 }}>
+          <Button
+            variant="outlined"
+            color="warning"
+            startIcon={<Drafts fontSize="small" />}
+            onClick={handleSaveAsDraft}
+            disabled={isSubmitting}
+          >
+            Save as Draft
+          </Button>
+
           <Button
             variant="contained"
             color="warning"
@@ -223,10 +250,20 @@ function UpdateNoticeAlertModal({ isOpen, onClose, onSuccess, noticeDetails }) {
             disabled={isSubmitting}
             onClick={handleUpdateBtnClick}
           >
-            Update
+            {isSubmitting ? "Updating…" : "Update"}
           </Button>
         </DialogActions>
       </Dialog>
+
+      {showMdEditor && (
+        <MarkdownEditorModal
+          isOpen={showMdEditor}
+          name="noticeDesc"
+          initialValue={form.noticeDesc}
+          onClose={handleMdEditorDialog}
+          onSubmitHandler={handleMdEditorSubmitBtnClick}
+        />
+      )}
 
       {/* ── Confirmation before API call ── */}
       {showConfirm && (
