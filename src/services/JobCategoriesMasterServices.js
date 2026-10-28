@@ -14,3 +14,28 @@ export async function addNewJobCategory(payload) {
     payload,
   );
 }
+
+export async function updateJobCategory(payload) {
+  return await ApplicationApi.put(
+    JOB_CATEGORIES_MASTER_BASE_URI + "update",
+    payload,
+  );
+}
+
+export async function markJobCategoryAsArchive(jobCategoryId) {
+  return await ApplicationApi.patch(
+    JOB_CATEGORIES_MASTER_BASE_URI + "mark/archive/" + jobCategoryId,
+  );
+}
+
+export async function markJobCategoryAsActive(jobCategoryId) {
+  return await ApplicationApi.patch(
+    JOB_CATEGORIES_MASTER_BASE_URI + "mark/active/" + jobCategoryId,
+  );
+}
+
+export async function deleteJobCategory(jobCategoryId) {
+  return await ApplicationApi.delete(
+    JOB_CATEGORIES_MASTER_BASE_URI + "mark/delete/" + jobCategoryId,
+  );
+}

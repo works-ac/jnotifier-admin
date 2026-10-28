@@ -14,28 +14,30 @@ import {
   useTheme,
 } from "@mui/material";
 import PropTypes from "prop-types";
-import React from "react";
 import useAppCss from "../../hooks/useAppCss";
 import FlexBox from "../styled/FlexBox";
-import { Add, Close, Work } from "@mui/icons-material";
+import { Add, Close, Security, Work } from "@mui/icons-material";
 import useAddNewJobCategoryMasterModal from "../../hooks/dialogs/useAddNewJobCategoryMasterModal";
 import AppAlert from "../AppAlert";
 import Notes from "../Notes";
+import Captcha from "../Captcha";
 
 function AddNewJobCategoryMasterModal({ isOpen, onClose, onSuccess }) {
   const theme = useTheme();
   const { GlobalDialogTitle, RequiredFieldCss } = useAppCss();
   const {
     handleTextboxOnChange,
+    handleCaptchaChange,
     handleAlertOnClose,
     handleAddBtnClick,
     isSubmitting,
     alert,
     payload,
+    captcha,
   } = useAddNewJobCategoryMasterModal(onSuccess, onClose);
 
   return (
-    <Dialog maxWidth="lg" fullWidth open={isOpen}>
+    <Dialog maxWidth="sm" fullWidth open={isOpen}>
       <Box
         component="div"
         sx={{
@@ -99,6 +101,7 @@ function AddNewJobCategoryMasterModal({ isOpen, onClose, onSuccess }) {
           required
           fullWidth
           name="jobCategoryName"
+          placeholder="Ex:- IT, Banking, Teaching"
           sx={RequiredFieldCss}
           slotProps={{
             input: {
@@ -118,7 +121,51 @@ function AddNewJobCategoryMasterModal({ isOpen, onClose, onSuccess }) {
           autoFocus
         />
 
-        <Box component="div" sx={{ my: 1 }}>
+        {/* Captcha verification */}
+        <Box
+          component="div"
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 1.5,
+            mt: 2.5,
+          }}
+        >
+          <Box
+            component="div"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            <Captcha />
+          </Box>
+
+          <TextField
+            label="Captcha Code"
+            name="captcha"
+            placeholder="Ex:- edh26w"
+            value={captcha}
+            onChange={handleCaptchaChange}
+            fullWidth
+            required
+            disabled={isSubmitting}
+            sx={RequiredFieldCss}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Security fontSize="small" color="primary" />
+                  </InputAdornment>
+                ),
+              },
+            }}
+            helperText="Please enter the captcha characters shown above."
+          />
+        </Box>
+
+        <Box component="div" sx={{ mt: 1.5 }}>
           <Notes
             note="All fields marked with asterisk (*) are mandatory to fill."
             noteColor={theme.palette.secondary.main}

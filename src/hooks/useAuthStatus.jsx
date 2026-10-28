@@ -29,6 +29,17 @@ function useAuthStatus() {
       const message = data?.message;
       const role = data?.role ?? null;
 
+      const isAdminRole =
+        role === "ROLE_ADMIN" ||
+        role === "ROLE_SUPERADMIN" ||
+        role === "ROLE_SYSADMIN";
+
+      if (!isAdminRole) {
+        dispatch(setUserAuthStatus({ authStatus: null }));
+        dispatch(setUserRole({ role: null }));
+        return;
+      }
+
       dispatch(setUserAuthStatus({ authStatus: message }));
       dispatch(setUserRole({ role }));
     } catch (error) {
@@ -38,7 +49,7 @@ function useAuthStatus() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [dispatch, reset, showErrorMsg]);
 
   return { checkUserAuthStatus, isLoading, alert, handleAlertOnClose };
 }

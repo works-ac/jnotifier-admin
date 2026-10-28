@@ -131,7 +131,7 @@ function AddJobModal({ open, onClose, onSuccess }) {
                   style: { fontWeight: 700, color: theme.palette.primary.main },
                 },
               }}
-              helperText="It can be atmost 32 characters long."
+              helperText="It can be atmost 100 characters long."
             />
 
             {/* ── Row 2: Start Date | End Date | Adv No (3 cols) ── */}

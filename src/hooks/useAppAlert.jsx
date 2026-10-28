@@ -7,35 +7,32 @@ function useAppAlert() {
     type: "error",
   });
 
-  const handleAlertOnClose = useCallback(
-    function () {
-      setAlert((prev) => ({
-        ...prev,
-        isOpen: false,
-        message: "",
-        type: "error",
-      }));
-    },
-    [alert],
-  );
-
-  const reset = useCallback(function () {
-    setAlert({ isOpen: false, message: "", type: "error" });
+  const handleAlertOnClose = useCallback(function () {
+    setAlert((prev) => ({
+      ...prev,
+      isOpen: false,
+      message: "",
+      type: "error",
+    }));
   }, []);
 
-  const showErrorMsg = useCallback(
-    function (error) {
-      const message =
-        error?.response?.data?.msg ??
-        error?.response?.data?.error?.message ??
-        error?.response?.data?.message ??
-        error?.message ??
-        "Something went wrong while processing your request, please try again!!!";
+  const reset = useCallback(function () {
+    setAlert((prev) => {
+      if (!prev.isOpen && !prev.message) return prev;
+      return { isOpen: false, message: "", type: "error" };
+    });
+  }, []);
 
-      setAlert((prev) => ({ ...prev, isOpen: true, message, type: "error" }));
-    },
-    [alert],
-  );
+  const showErrorMsg = useCallback(function (error) {
+    const message =
+      error?.response?.data?.msg ??
+      error?.response?.data?.error?.message ??
+      error?.response?.data?.message ??
+      error?.message ??
+      "Something went wrong while processing your request, please try again!!!";
+
+    setAlert((prev) => ({ ...prev, isOpen: true, message, type: "error" }));
+  }, []);
 
   return { alert, setAlert, handleAlertOnClose, reset, showErrorMsg };
 }

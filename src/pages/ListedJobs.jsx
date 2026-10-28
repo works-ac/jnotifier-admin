@@ -9,7 +9,7 @@ import {
 import React, { useState } from "react";
 import useAppCss from "../hooks/useAppCss";
 import Heading from "../components/Heading";
-import { Add, SwapHoriz, Work } from "@mui/icons-material";
+import { Add, CloudUpload, SwapHoriz, Work } from "@mui/icons-material";
 import useHome from "../hooks/useHome";
 import {
   MaterialReactTable,
@@ -21,10 +21,13 @@ import AddJobModal from "../components/dialogs/AddJobModal";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import ViewJobModal from "../components/dialogs/ViewJobModal";
 import EditJobModal from "../components/dialogs/EditJobModal";
+import BulkJobCreationModal from "../components/dialogs/BulkJobCreationModal";
+import UploadJobFilesModal from "../components/dialogs/UploadJobFilesModal";
 
 function ListedJobs() {
   const theme = useTheme();
   const [addModalOpen, setAddModalOpen] = useState(false);
+  const [bulkModalOpen, setBulkModalOpen] = useState(false);
   const { GlobalPaperCss, GlobalTableCss } = useAppCss();
   const {
     alert,
@@ -41,11 +44,13 @@ function ListedJobs() {
     confirmToggle,
     setShowViewDialog,
     setShowEditDialog,
+    setShowUploadFilesDialog,
     pendingToggle,
     isProcessing,
     jobDetails,
     showViewDialog,
     showEditDialog,
+    showUploadFilesDialog,
   } = useMRTColDefsFactory();
 
   const table = useMaterialReactTable({
@@ -73,9 +78,20 @@ function ListedJobs() {
     setPagination({ pageIndex: 0, pageSize: pagination.pageSize });
   };
 
+  /** Called by BulkJobCreationModal on successful bulk creation */
+  const handleBulkSuccess = () => {
+    setBulkModalOpen(false);
+    setPagination({ pageIndex: 0, pageSize: pagination.pageSize });
+  };
+
   const handleEditSuccess = () => {
     setShowEditDialog(false);
     setPagination({ pageIndex: 0, pageSize: pagination.pageSize });
+  };
+
+  const handleUploadFilesSuccess = () => {
+    setShowUploadFilesDialog(false);
+    setPagination({ pageIndex: pagination.pageIndex, pageSize: pagination.pageSize });
   };
 
   return (
@@ -103,9 +119,19 @@ function ListedJobs() {
             display: "flex",
             alignItems: "center",
             justifyContent: "flex-end",
+            gap: 1.5,
             mt: 1,
           }}
         >
+          <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<CloudUpload fontSize="small" />}
+            onClick={() => setBulkModalOpen(true)}
+          >
+            Bulk Job Creation
+          </Button>
+
           <Button
             variant="outlined"
             color="success"
@@ -137,6 +163,12 @@ function ListedJobs() {
         onSuccess={handleAddSuccess}
       />
 
+      <BulkJobCreationModal
+        open={bulkModalOpen}
+        onClose={() => setBulkModalOpen(false)}
+        onSuccess={handleBulkSuccess}
+      />
+
       {showViewDialog && (
         <ViewJobModal
           isOpen={showViewDialog}
@@ -151,6 +183,15 @@ function ListedJobs() {
           onClose={() => setShowEditDialog(false)}
           onSuccess={handleEditSuccess}
           applicationDetails={jobDetails}
+        />
+      )}
+
+      {showUploadFilesDialog && (
+        <UploadJobFilesModal
+          open={showUploadFilesDialog}
+          job={jobDetails}
+          onClose={() => setShowUploadFilesDialog(false)}
+          onSuccess={handleUploadFilesSuccess}
         />
       )}
     </Container>

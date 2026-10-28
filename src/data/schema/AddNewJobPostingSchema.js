@@ -3,7 +3,7 @@ import z from "zod";
 export const AddNewJobPostingSchema = z.object({
   title: z
     .string()
-    .max(32, "Job application title is too long")
+    .max(100, "Job application title is too long")
     .min(1, "Job application title is too short"),
   applicationStartDate: z.string(),
   applicationEndDate: z.string(),

@@ -1,4 +1,5 @@
 import {
+  CloudUpload,
   DateRangeTwoTone,
   Edit,
   OpenInNew,
@@ -29,6 +30,7 @@ export default function useMRTColDefsFactory() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [showViewDialog, setShowViewDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showUploadFilesDialog, setShowUploadFilesDialog] = useState(false);
   const [jobDetails, setJobDetails] = useState(null);
   const { isLoading } = useViews("/jobs");
 
@@ -81,6 +83,13 @@ export default function useMRTColDefsFactory() {
 
     setJobDetails(rowData);
     setShowEditDialog(true);
+  }, []);
+
+  const handleUploadFilesBtn = useCallback(async function (rowData) {
+    if (!rowData) return;
+
+    setJobDetails(rowData);
+    setShowUploadFilesDialog(true);
   }, []);
 
   // ── Column definitions ───────────────────────────────────────────────────
@@ -228,6 +237,16 @@ export default function useMRTColDefsFactory() {
                 </span>
               </Tooltip>
 
+              <Tooltip title="Upload Files (Markdown / PDF)" arrow>
+                <IconButton
+                  color="info"
+                  onClick={() => handleUploadFilesBtn(row?.original)}
+                  disabled={isLoading}
+                >
+                  <CloudUpload fontSize="small" />
+                </IconButton>
+              </Tooltip>
+
               <Tooltip title="Edit" arrow>
                 <IconButton
                   color="warning"
@@ -271,7 +290,7 @@ export default function useMRTColDefsFactory() {
         },
       },
     ],
-    [isProcessing],
+    [isProcessing, handleUploadFilesBtn, handleEditBtn, handleViewBtn, GlobalChipCss, isLoading],
   );
 
   return {
@@ -281,9 +300,11 @@ export default function useMRTColDefsFactory() {
     confirmToggle,
     setShowViewDialog,
     setShowEditDialog,
+    setShowUploadFilesDialog,
     isProcessing,
     showViewDialog,
     showEditDialog,
+    showUploadFilesDialog,
     jobDetails,
   };
 }

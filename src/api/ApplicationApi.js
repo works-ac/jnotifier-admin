@@ -10,6 +10,16 @@ const apiClient = axios.create({
   timeoutErrorMessage:
     "Sorry, there's a problem connecting to our server right now, please try again!!!",
   withCredentials: true, // Crucial: Ensures cookies are sent with every request
+  headers: {
+    "X-Client-Type": "ADMIN",
+  },
+});
+
+// Request Interceptor: Ensure X-Client-Type header is always attached
+apiClient.interceptors.request.use((config) => {
+  config.headers = config.headers || {};
+  config.headers["X-Client-Type"] = "ADMIN";
+  return config;
 });
 
 // Queue management for parallel requests during a refresh
@@ -41,7 +51,9 @@ apiClient.interceptors.response.use(
       ) {
         try {
           await clearCookies();
-        } catch {}
+        } catch {
+          // ignore cleanup errors during forced redirect
+        }
 
         globalThis.location.href = "/account";
         return Promise.reject(error);

@@ -4,12 +4,12 @@ import {
   Container,
   Divider,
   Paper,
+  Typography,
   useTheme,
 } from "@mui/material";
-import React from "react";
 import useAppCss from "../hooks/useAppCss";
 import Heading from "../components/Heading";
-import { Add, Category } from "@mui/icons-material";
+import { Add, Category, QuestionMark } from "@mui/icons-material";
 import useMRTJobCategoriesMasterColDefsFactory from "../hooks/mrt/useMRTJobCategoriesMasterColDefsFactory";
 import {
   MaterialReactTable,
@@ -19,11 +19,12 @@ import useJobCategoriesMaster from "../hooks/features/useJobCategoriesMaster";
 import AppAlert from "../components/AppAlert";
 import FlexBox from "../components/styled/FlexBox";
 import AddNewJobCategoryMasterModal from "../components/dialogs/AddNewJobCategoryMasterModal";
+import EditJobCategoryMasterModal from "../components/dialogs/EditJobCategoryMasterModal";
+import ConfirmationDialog from "../components/ConfirmationDialog";
 
 function JobCategoryMasterPage() {
   const theme = useTheme();
   const { GlobalPaperCss, GlobalTableCss } = useAppCss();
-  const { MRTColumns: columns } = useMRTJobCategoriesMasterColDefsFactory();
   const {
     handleAlertOnClose,
     setPagination,
@@ -36,6 +37,22 @@ function JobCategoryMasterPage() {
     pagination,
     paginationMetadata,
   } = useJobCategoriesMaster();
+
+  const {
+    MRTColumns: columns,
+    showDialog,
+    setShowDialog,
+    showDeleteDialog,
+    setShowDeleteDialog,
+    showEditDialog,
+    setShowEditDialog,
+    row,
+    dialogContent,
+    loading,
+    deactivateCategory,
+    activateCategory,
+    deleteCategory,
+  } = useMRTJobCategoriesMasterColDefsFactory(fetchAllJobCategories);
 
   const table = useMaterialReactTable({
     columns,
@@ -92,6 +109,54 @@ function JobCategoryMasterPage() {
           isOpen={showAddDialog}
           onClose={handleAddDialogOnToggle}
           onSuccess={fetchAllJobCategories}
+        />
+      )}
+
+      {showEditDialog && (
+        <EditJobCategoryMasterModal
+          key={row?.id}
+          isOpen={showEditDialog}
+          categoryDetails={row}
+          onClose={() => setShowEditDialog(false)}
+          onSuccess={fetchAllJobCategories}
+        />
+      )}
+
+      {showDialog && (
+        <ConfirmationDialog
+          Icon={QuestionMark}
+          heading="Confirmation"
+          isLoading={loading.archive || loading.activate}
+          text={
+            <Typography
+              sx={{ textAlign: "justify", fontWeight: 700 }}
+              variant="body1"
+            >
+              {dialogContent}
+            </Typography>
+          }
+          open={showDialog}
+          onCancel={() => setShowDialog(false)}
+          onSuccess={row?.isActive ? deactivateCategory : activateCategory}
+        />
+      )}
+
+      {showDeleteDialog && (
+        <ConfirmationDialog
+          Icon={QuestionMark}
+          heading="Confirmation"
+          isLoading={loading.delete}
+          text={
+            <Typography
+              sx={{ textAlign: "justify", fontWeight: 700 }}
+              variant="body1"
+            >
+              {dialogContent}
+            </Typography>
+          }
+          open={showDeleteDialog}
+          onCancel={() => setShowDeleteDialog(false)}
+          onSuccess={deleteCategory}
         />
       )}
     </>
